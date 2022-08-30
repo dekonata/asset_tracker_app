@@ -7,26 +7,14 @@ import LocationList from '../components/LocationList/LocationList';
 
 import { setLocationId } from '../components/LocationCard/locationCardSlice';
 import { 
-	useGetAllLocationsQuery,
 	useGetLocationListsQuery
 } from '../api/apiLocationsSlice'
 
 const ViewEditLocation = () => {
 	const dispatch = useDispatch();
 
-	const [filteredLocations, setFilteredLocations] = useState([]);
-
 	const parsed_id = useSelector(state => state.locations.locationId)
-
 	const {data:locationList} = useGetLocationListsQuery();
-	const {data: locations, isSuccess} = useGetAllLocationsQuery();
-
-
-	useEffect(() => {
-		if(isSuccess) {
-			setFilteredLocations(locations);
-		}
-	}, [locations, isSuccess]);
 
 	const onLocationSelect = (location) => {
 		const parsed_id = location.substr(0,5);

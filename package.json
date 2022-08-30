@@ -4,17 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install-server": "npm install prefix server",
+    "install-client": "npm install --prefix client",
     "server": "npm run watch --prefix server",
-    "client": "npm run start --prefix client"
+    "build-client": "npm run build --prefix client",
+    "client": "npm run start --prefix client",
+    "deploy": "npm run build --prefix client && npm run start ---prefix server"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.0.1",
-    "cookie-session": "^2.0.0",
-    "csv-stringify": "^6.1.0",
-    "JSONStream": "^1.3.5",
-    "luxon": "^3.0.1",
-    "pg-query-stream": "^4.2.3"
-  }
+  "license": "ISC"
 }

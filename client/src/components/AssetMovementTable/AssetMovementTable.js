@@ -1,8 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { DateTime } from "luxon";
-
-import { DateFormatter } from '../../utils/utils';
 
 import {useGetAssetTransfersQuery } from '../../api/apiTransfersSlice';
 import { setViewEditPage } from '../../containers/ViewEdit/viewEditSlice.js';

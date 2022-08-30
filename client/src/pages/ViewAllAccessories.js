@@ -12,10 +12,6 @@ const ViewAllAccessories = () => {
 
     const dispatch = useDispatch()
 
-    const deleteMovement = () => {
-        return
-    }
-
     return(
         <div>
             {

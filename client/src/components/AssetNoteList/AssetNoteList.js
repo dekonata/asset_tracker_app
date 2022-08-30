@@ -29,7 +29,7 @@ const AssetNoteList = ({asset_id}) => {
         }
 
         try {
-            const submitAdd = await addAssetNote(edit_data);
+            await addAssetNote(edit_data);
             setNewNote('');
             refetch();
         } catch(err) {
@@ -40,7 +40,7 @@ const AssetNoteList = ({asset_id}) => {
     const submitEditNote = async (edit_data) => {
         const {note_id, note} = edit_data
         try {
-             const submit = await editAssetNote({note_id, note}).unwrap();
+             await editAssetNote({note_id, note})
              setEditNote('');
         } catch(err) {
             console.log(err);
@@ -56,8 +56,7 @@ const AssetNoteList = ({asset_id}) => {
 
     const deleteNote = async (note_id) => {
         try {
-            const deleteNote = await deleteAssetNote(note_id);
-            console.log(deleteNote)
+            await deleteAssetNote(note_id);
             refetch();
         } catch(err) {
             alert(err)

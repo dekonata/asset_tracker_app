@@ -5,8 +5,6 @@ import ViewEditField from '../ViewEditField/ViewEditField'
 import AssetTransferForm from '../AssetTransferForm/AssetTransferForm'
 import AccessoryMovementTable from '../AccessoryMovementTable/AccessoryMovementTable.js';
 
-import { DateFormatter } from '../../utils/utils';
-
 import {useGetOneAccessoryQuery, useEditAccessoryMutation } from '../../api/apiAccessoriesSlice';
 
 import { 

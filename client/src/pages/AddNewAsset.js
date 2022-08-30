@@ -7,7 +7,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import AddAssetAccessory from '../components/AddAssetAccessory/AddAssetAccessory.js'
 
 import { 
-	useAddAssetMutation,
 	useAddMultipleAssetsMutation,
 	useGetAssetListsQuery,
 

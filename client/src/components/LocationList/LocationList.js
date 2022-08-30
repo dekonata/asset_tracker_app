@@ -1,11 +1,4 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-
-// import { setAsset } from '../AssetCard/assetCardSlice'
-
 const LocationList = ({locations}) => {
-    const dispatch = useDispatch();
-
     return(
         <div className="pa2">
             <h3 className="z-0">Locations</h3>

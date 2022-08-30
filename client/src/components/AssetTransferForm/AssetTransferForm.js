@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from "react-datepicker";
-import { parsedLocationId } from '../../utils/utils.js'
 
 import SuggestBox from '../SuggestBox/SuggestBox';
 import AssetAccessoriesTransfer from './AssetAccessoriesTransfer';
