@@ -1,4 +1,5 @@
 const db = require('../services/knex.js');
+const { DateTime } = require('luxon')
 
 const {queryParsedLocations} = require('../services/utils.js');
 
@@ -13,6 +14,7 @@ async function getAssetTransfers(serialnumber) {
 	try {const transfersList =
 			 await 
 			 	db.select(
+					'transfer_id',
 			 		'location_type',
 					db.raw(queryParsedLocations()),
 					'transfer_date', 
@@ -30,6 +32,25 @@ async function getAssetTransfers(serialnumber) {
 	} catch(err) {
 		throw err;
 	}
+}
+
+async function transfersDateTest () {
+	const query = await
+		db.select(
+			'asset_id',
+			'transfer_date'
+		)
+		.from('asset_transfer')
+
+	const result = query.map(tr =>{ 
+		const rdate = tr.transfer_date
+		console.log(rdate)
+
+		const date = DateTime.fromJSDate(rdate).setLocale('en-gb').toLocaleString()
+
+		return date
+	});
+	return result
 }
 
 async function getAccTransfers(acc_id) {
@@ -111,9 +132,34 @@ async function addAssetTransfer( transfer_data ) {
 	}
 }
 
+async function deleteTransfer(transfer_id) {
+		const transferDetails = await 
+			db('asset_transfer')
+				.where('transfer_id', transfer_id)
+	
+		if(transferDetails.length) {
+			const lastTr = await getLastTransfer(transferDetails[0].asset_id);
+	
+			// If last transaction was after transaction being deleted, throw error
+			const lastTrDate = new Date(lastTr.transfer_date);
+			const delTrDate = new Date(transferDetails[0].transfer_date);
+	
+			if(delTrDate.getTime() < lastTrDate.getTime()) {
+				throw new Error('Error: Transfer date before last transaction');
+			} 
+	
+			const delTr = db('asset_transfer')
+				.where('transfer_id', transfer_id)
+				.del();
+	
+			return delTr;
+		}	
+		throw new Error('Transfer not found');
+}
+
 async function test() {
 	try {
-		const dates = await getAssetTransfers('BING');
+		const dates = await deleteTransfer(1000);
 		console.log(dates)
 	} catch (err) {
 		console.log(err)
@@ -126,4 +172,5 @@ module.exports = {
 	addAssetTransfer,
 	getAccTransfers,
 	getAssetTransfers,
+	deleteTransfer
 }

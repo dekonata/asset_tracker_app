@@ -1,3 +1,5 @@
+import React from "react"
+
 const TextAreaInput = ({label, handleInputChange}) => {
 	return (
 		<div className="pv1 flex items-center">
@@ -8,11 +10,11 @@ const TextAreaInput = ({label, handleInputChange}) => {
 					title=""
 					type="textarea" 
 					onChange={handleInputChange}
-					>
+				>
 				</textarea>
 			</div>
 		</div>
-		)
+	);
 }
 
-export default TextAreaInput
+export default TextAreaInput;

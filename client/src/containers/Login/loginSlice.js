@@ -1,7 +1,7 @@
 import { createSlice } from  '@reduxjs/toolkit'
 
 const initialState = {
-	access: 'None'
+	access: ''
 }
 
 export const slice = createSlice({

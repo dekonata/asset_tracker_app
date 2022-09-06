@@ -12,4 +12,4 @@ export const movement_type_list = [
 	'Terminal Request',
 	'Faulty Return',
 	'Used Return'
-	]
+]

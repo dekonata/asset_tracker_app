@@ -8,11 +8,12 @@ const LOCATION_TYPE = 'Staff'
 const ID_RANGE = 30
 
 const TEST_STAFF = {
-	staff_id: 10,
-	firstname: "",
-	lastname: "Packs",
-	email: 'test@gmail.com',
-	password: "password"
+	staff_id: 1,
+	firstname: "admin",
+	lastname: "",
+	email: 'admin@as.com',
+	password: "1q2w3e",
+	access: 'beking'
 };
 
 const TEST_EDIT_STAFF = {
@@ -131,7 +132,7 @@ async function editPassword(edit_data) {
 
 
 async function test() {
-	const postAddStaff = await editPassword({staff_id: 10, password: '1q2w3e!'});
+	const postAddStaff = await addStaff(TEST_STAFF);
 	console.log(postAddStaff)
 }
 

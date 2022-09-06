@@ -19,19 +19,19 @@ const Add = () => {
 
 	const returnAddType = (addType) => {
 		switch (addType){
-			case "Asset":
-				return <AddNewAsset/>
-            case "Cabinet":
-             	return <AddNewCabinet/>
-            case "Shelf":
-             	return <AddNewShelf/>
-            case "Staff":
-             	return <AddNewStaff/>
-            case "Accessory":
-             // Todo Create Add Accessory Page
-             	return <AddNewAccessory/>
-			default:
-				return <div></div>
+		case "Asset":
+			return <AddNewAsset/>
+		case "Cabinet":
+			return <AddNewCabinet/>
+		case "Shelf":
+			return <AddNewShelf/>
+		case "Staff":
+			return <AddNewStaff/>
+		case "Accessory":
+			// Todo Create Add Accessory Page
+			return <AddNewAccessory/>
+		default:
+			return <div></div>
 		}
 	}
 

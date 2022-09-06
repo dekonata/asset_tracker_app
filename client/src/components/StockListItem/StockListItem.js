@@ -5,7 +5,7 @@ const StockListItem = (label, value, suggestlist) => {
 	const [changeOpen, setChangeOpen] = useState(false)
 	const [changeValue, setChangeValue] = useState('')
 
-	const handleClickChange = (event) =>{
+	const handleClickChange = () =>{
 		setChangeOpen(true)
 	}
 
@@ -16,7 +16,7 @@ const StockListItem = (label, value, suggestlist) => {
 	
 	return(
 		<div>
-		{ 	!changeOpen ?
+			{ 	!changeOpen ?
 				<div>
 					<span className="dib w4 pr5 mv2">{label}</span>
 					<span className="">{value}</span>
@@ -25,14 +25,14 @@ const StockListItem = (label, value, suggestlist) => {
 						onClick={handleClickChange}>
 					</button>	
 				</div>	
-			:
+				:
 				<div>
 					<SuggestBox 
 						label={label}
 						value={changeValue} 
 						suggestlist={suggestlist}
 						handleInputChange={input_value => setChangeValue(input_value)}
-						/>
+					/>
 					<button className="link dim gray f6 f5-ns dib mr3 mv2 pointer fr" href=''
 						value={value}
 						onClick={handleSubmit}>
@@ -42,7 +42,7 @@ const StockListItem = (label, value, suggestlist) => {
 
 				</div>
 
-		}
+			}
 		</div>
 
 	)

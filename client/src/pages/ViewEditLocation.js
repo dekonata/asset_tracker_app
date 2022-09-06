@@ -1,9 +1,8 @@
-import{ useState, useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import SuggestBox from '../components/SuggestBox/SuggestBox';
 import LocationCard from '../components/LocationCard/LocationCard';
-import LocationList from '../components/LocationList/LocationList';
 
 import { setLocationId } from '../components/LocationCard/locationCardSlice';
 import { 
@@ -19,7 +18,7 @@ const ViewEditLocation = () => {
 	const onLocationSelect = (location) => {
 		const parsed_id = location.substr(0,5);
 		dispatch(setLocationId(parsed_id));
-   	}
+	}
 
 	return (
 		<div>
@@ -29,12 +28,12 @@ const ViewEditLocation = () => {
 				initial_input={parsed_id}
 				handleInputChange={onLocationSelect}
 			/>
-		{parsed_id && 
+			{parsed_id && 
 			<div>
-                <button
-                    onClick={(() => dispatch(setLocationId('')))}
-                     >BACK
-                </button>
+				<button
+					onClick={(() => dispatch(setLocationId('')))}
+				>BACK
+				</button>
 				<LocationCard/>
 			</div>}
 		</div>

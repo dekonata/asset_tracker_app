@@ -15,28 +15,28 @@ const LocationCard = () => {
 		<div className=''>
 			{!isSuccess
 				?
-					<h1> LOADING </h1>
+				<h1> LOADING </h1>
 				:
-					<div className="mb4">
-                        <h3 className="bb">Locations Details</h3>
-                        <div>
-                            <span className="dib w4 pr5 mv2">Location ID:</span><span>{parsed_id}</span>
-                        </div>
-                        <div>
-                            <span className="dib w4 pr5 mv2">Location Type:</span><span>{locationData?.location_type}</span>
-                        </div>
-                        <div>
-                            <span className="dib w4 pr5 mv2">Location:</span><span>{locationData?.located}</span>
-                        </div>                                                        
-                        <h3 className="bb">Assets</h3> 
-                        <AssetList
-                        	asset_list={locationData?.assets}
-                        />
-                        <h3 className="bb">Accessories</h3>                     
-                        <LocationAccessoryList
-                        	accessory_list={locationData?.accessories}
-                        />     						
+				<div className="mb4">
+					<h3 className="bb">Locations Details</h3>
+					<div>
+						<span className="dib w4 pr5 mv2">Location ID:</span><span>{parsed_id}</span>
 					</div>
+					<div>
+						<span className="dib w4 pr5 mv2">Location Type:</span><span>{locationData?.location_type}</span>
+					</div>
+					<div>
+						<span className="dib w4 pr5 mv2">Location:</span><span>{locationData?.located}</span>
+					</div>                                                        
+					<h3 className="bb">Assets</h3> 
+					<AssetList
+						asset_list={locationData?.assets}
+					/>
+					<h3 className="bb">Accessories</h3>                     
+					<LocationAccessoryList
+						accessory_list={locationData?.accessories}
+					/>     						
+				</div>
 			}
 		</div>
 	)

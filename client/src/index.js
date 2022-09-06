@@ -8,10 +8,10 @@ import reportWebVitals from './reportWebVitals';
 import 'tachyons'
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App className="min-h-100"/>
-  </Provider>,
-  document.getElementById('root')
+	<Provider store={store}>
+		<App className="min-h-100"/>
+	</Provider>,
+	document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

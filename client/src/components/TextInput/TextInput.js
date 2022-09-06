@@ -1,3 +1,5 @@
+import React from "react";
+
 const TextInput = ({label, handleInputChange, value, type="text", autoComplete}) => {
 	return (
 		<div className="pv1 flex items-center">
@@ -13,7 +15,7 @@ const TextInput = ({label, handleInputChange, value, type="text", autoComplete})
 					onChange={handleInputChange}/> 
 			</div>
 		</div>
-		)
-}
+	);
+};
 
-export default TextInput
+export default TextInput;

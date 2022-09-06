@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDispatch ,useSelector } from 'react-redux';
 
 import SuggestBox from '../components/SuggestBox/SuggestBox';
@@ -6,8 +7,8 @@ import StaffCard from '../components/StaffCard/StaffCard'
 import { setStaffId } from '../components/StaffCard/staffCardSlice'
 import { 
 	useGetStaffListsQuery,
-	 } 
-	 from '../api/apiStaffSlice';
+} 
+	from '../api/apiStaffSlice';
 
 const ViewEditStaff = () => {
 	const dispatch = useDispatch();
@@ -23,15 +24,15 @@ const ViewEditStaff = () => {
 				initial_input={staffId}
 				handleInputChange={(staffmember) => dispatch(setStaffId((staffmember.substr(5,2))))}
 			/>
-		{staffId && 
+			{staffId && 
 			<div>
-	            <button
-	                onClick={(() => dispatch(setStaffId('')))}
-	                 >BACK
-	            </button>
+				<button
+					onClick={(() => dispatch(setStaffId('')))}
+				>BACK
+				</button>
 				<StaffCard/>
 			</div>
-		}
+			}
 		</div>
 	);
 }

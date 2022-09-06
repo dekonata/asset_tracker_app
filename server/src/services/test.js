@@ -37,3 +37,9 @@ const testObj = {
 const {obj} = testObj
 
 console.log(obj)
+
+assets = ['Apple: Ipad']
+filter = 'Apple'
+const filteredAssets = assets.filter(asset => asset.toLowerCase().includes(filter.toLowerCase()));
+
+console.log(filteredAssets)

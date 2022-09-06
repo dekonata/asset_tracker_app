@@ -56,13 +56,12 @@ async function getLocationIDByTypeID(location_type, location_type_id) {
 async function getLocationSuggestlists() {
 	const locationsQuery = await
 		db.select(
-			'location_id',
 			db.raw(queryParsedLocations()),	
 		)
 		.from('all_locations')
 		.whereNot('location_type', 'staff')
 
-	const allLocations = locationsQuery.map(location => [location.location, location.location_id]);
+	const allLocations = locationsQuery.map(location => location.location);
 
 	return allLocations
 }
@@ -139,7 +138,7 @@ async function getLocationAccessories(location_id) {
 
 // Delete when complete
 async function test() {
-	const newStorage = await getLocationAssets(1);
+	const newStorage = await getLocationSuggestlists();
 	console.log(newStorage)
 }
 

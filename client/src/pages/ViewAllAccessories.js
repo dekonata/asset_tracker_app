@@ -8,27 +8,27 @@ import { setAccessory } from '../components/AccessoryCard/accessoryCardSlice';
 
 
 const ViewAllAccessories = () => {
-    const accId = useSelector(state => state.accessory.accId);
+	const accId = useSelector(state => state.accessory.accId);
 
-    const dispatch = useDispatch()
+	const dispatch = useDispatch()
 
-    return(
-        <div>
-            {
-                accId 
-                ?  
-                    <div>
-                        <button
-                            onClick={(() => dispatch(setAccessory('')))}
-                             >BACK
-                        </button>
-                        <AccessoryCard/>
-                    </div>
-                :
-                    <AccessoryList/>
-            }
-        </div>
-    );
+	return(
+		<div>
+			{
+				accId 
+					?  
+					<div>
+						<button
+							onClick={(() => dispatch(setAccessory('')))}
+						>BACK
+						</button>
+						<AccessoryCard/>
+					</div>
+					:
+					<AccessoryList/>
+			}
+		</div>
+	);
 }
 
 export default ViewAllAccessories;

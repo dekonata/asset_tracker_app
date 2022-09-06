@@ -10,10 +10,9 @@ import {
 	useGetOneAssetQuery,
 	useGetAssetListsQuery,
 	useEditAssetMutation
-	 } 
-	 from '../../api/apiAssetSlice';
+} from '../../api/apiAssetSlice';
 
-const AssetCard = ({getStockItemDetails, update, setUpdate }) => {
+const AssetCard = () => {
 	const [moveOpen, setMoveOpen] = useState(false);
 
 	const serial_number = useSelector(state => state.asset.serial)
@@ -47,74 +46,74 @@ const AssetCard = ({getStockItemDetails, update, setUpdate }) => {
 		<div className=''>
 			{!isSuccess
 				?
-					<h1>LOADINNG</h1>
+				<h1>LOADINNG</h1>
 				: 
+				<div>
+					<h3 className="bb"> Asset Details </h3>
+					<ViewEditField
+						input_type='suggest'
+						asset_type={asset?.asset_type}
+						serial={serial_number}
+						suggestlist={suggestlists?.[asset?.asset_type]?.makeList}
+						label= 'Make:'
+						value={asset?.make}
+						data_field='make'
+						handleEdit={handleEdit}
+					/>		
+					<ViewEditField
+						input_type='suggest'
+						asset_type={asset?.asset_type}
+						serial={serial_number}
+						suggestlist={suggestlists?.[asset?.asset_type]?.modelList}
+						label= 'Model:'
+						value={asset?.model}
+						data_field='model'
+						handleEdit={handleEdit}
+					/>
+					<ViewEditField
+						input_type='suggest'
+						asset_type={asset?.asset_type}
+						serial={serial_number}
+						suggestlist={suggestlists?.[asset?.asset_type]?.conditionList}
+						label= 'Condition:'
+						value={asset?.asset_condition}
+						data_field='asset_condition'
+						handleEdit={handleEdit}
+					/>
+					<ViewEditField
+						input_type='text'
+						asset_type={asset?.asset_type}
+						serial={serial_number}
+						label= 'Serial:'
+						value={asset?.serialnumber}
+						data_field='serialnumber'
+						handleEdit={handleEdit}
+					/>
 					<div>
-						<h3 className="bb"> Asset Details </h3>
-						<ViewEditField
-							input_type='suggest'
-							asset_type={asset?.asset_type}
-							serial={serial_number}
-							suggestlist={suggestlists?.[asset?.asset_type]?.makeList}
-							label= 'Make:'
-							value={asset?.make}
-							data_field='make'
-							handleEdit={handleEdit}
-							/>		
-						<ViewEditField
-							input_type='suggest'
-							asset_type={asset?.asset_type}
-							serial={serial_number}
-							suggestlist={suggestlists?.[asset?.asset_type]?.modelList}
-							label= 'Model:'
-							value={asset?.model}
-							data_field='model'
-							handleEdit={handleEdit}
-							/>
-						<ViewEditField
-							input_type='suggest'
-							asset_type={asset?.asset_type}
-							serial={serial_number}
-							suggestlist={suggestlists?.[asset?.asset_type]?.conditionList}
-							label= 'Condition:'
-							value={asset?.asset_condition}
-							data_field='asset_condition'
-							handleEdit={handleEdit}
-							/>
-						<ViewEditField
-							input_type='text'
-							asset_type={asset?.asset_type}
-							serial={serial_number}
-							label= 'Serial:'
-							value={asset?.serialnumber}
-							data_field='serialnumber'
-							handleEdit={handleEdit}
-							/>
-						<div>
-							<span className="dib w4 pr5 mv2">Location:</span><span>{asset?.location}</span>
-						</div>
-						{moveOpen 
-						?	
-							<AssetTransferForm
-								asset_id={asset?.asset_id}
-								close_transfer={closeTransfer}
-								current_location={asset?.location}
-							/> 
-						: 
-							<button 
-                                className="mt3"
-								onClick={() => setMoveOpen(true)}
-								>Capure Stock Movement</button>
-						}
-						<AssetNoteList
-							asset_id={asset?.asset_id}
-
-
-						/>				
+						<span className="dib w4 pr5 mv2">Location:</span><span>{asset?.location}</span>
 					</div>
+					{moveOpen 
+						?	
+						<AssetTransferForm
+							asset_id={asset?.asset_id}
+							close_transfer={closeTransfer}
+							current_location={asset?.location}
+						/> 
+						: 
+						<button 
+							className="mt3"
+							onClick={() => setMoveOpen(true)}
+						>Capure Stock Movement</button>
+					}
+					<AssetNoteList
+						asset_id={asset?.asset_id}
 
 
-				}
+					/>				
+				</div>
+
+
+			}
 			
 		</div>
 	)

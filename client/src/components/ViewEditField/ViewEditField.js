@@ -4,7 +4,7 @@ import SuggestBox from '../SuggestBox/SuggestBox';
 import TextInput from '../TextInput/TextInput'
 
 
-const ViewEditField = ({input_type, asset_type, serial, suggestlist, label, value, data_field, handleEdit}) => {
+const ViewEditField = ({input_type, serial, suggestlist, label, value, data_field, handleEdit}) => {
 	// Editable data fields on View/Edit page
 	const [ editOpen, setEditOpen ] = useState(false);
 	const [ editValue, setEditValue ] = useState(value);
@@ -28,8 +28,8 @@ const ViewEditField = ({input_type, asset_type, serial, suggestlist, label, valu
 
 	return(
 		<div className=''>
-		{ !editOpen 
-			?
+			{ !editOpen 
+				?
 				<div>
 					<span className="dib w4 pr5 mv2">{label}</span>
 					<span className="dib w-40">{value}</span>
@@ -38,55 +38,55 @@ const ViewEditField = ({input_type, asset_type, serial, suggestlist, label, valu
 							Edit
 					</button>
 				</div>
-			: 
+				: 
 				input_type === 'suggest' 
 					?
-						<div>
-							<form className="bg-light-silver">
+					<div>
+						<form className="bg-light-silver">
 							{console.log(suggestlist)}
-								<SuggestBox 
-									initial_input={value}
-									label={label}
-									suggestlist={suggestlist} 
-									addNewEnabled={true}
-									handleInputChange={input_value => setEditValue(input_value)}
-									/>
-									<input
-										className="mr2"
-										type='submit'
-										value='Submit Edit'
-										id='test'
-										onClick={event => onSubmitEdit(event)}
-									/>
-									<input
-										type='submit'
-										value='Cancel Edit'
-										onClick={() => setEditOpen(false)}
-									/>
-							</form>
-						</div>
+							<SuggestBox 
+								initial_input={value}
+								label={label}
+								suggestlist={suggestlist} 
+								addNewEnabled={true}
+								handleInputChange={input_value => setEditValue(input_value)}
+							/>
+							<input
+								className="mr2"
+								type='submit'
+								value='Submit Edit'
+								id='test'
+								onClick={event => onSubmitEdit(event)}
+							/>
+							<input
+								type='submit'
+								value='Cancel Edit'
+								onClick={() => setEditOpen(false)}
+							/>
+						</form>
+					</div>
 					:
-						<div>
-							<form className="bg-light-silver">
-									<TextInput
-										label={label}
-										value={editValue}
-										handleInputChange={event => setEditValue(event.target.value)}
-										/>
-									<input
-										className="mr2"
-										type='submit'
-										value='Submit Edit'
-										id='test'
-										onClick={event => onSubmitEdit(event)}
-									/>
-									<input
-										type='submit'
-										value='Cancel Edit'
-										onClick={() => setEditOpen(false)}
-									/>
-							</form>
-						</div>
+					<div>
+						<form className="bg-light-silver">
+							<TextInput
+								label={label}
+								value={editValue}
+								handleInputChange={event => setEditValue(event.target.value)}
+							/>
+							<input
+								className="mr2"
+								type='submit'
+								value='Submit Edit'
+								id='test'
+								onClick={event => onSubmitEdit(event)}
+							/>
+							<input
+								type='submit'
+								value='Cancel Edit'
+								onClick={() => setEditOpen(false)}
+							/>
+						</form>
+					</div>
 
 			}
 		</div>

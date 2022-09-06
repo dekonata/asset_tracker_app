@@ -1,4 +1,4 @@
-import{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import logo from './albatros_logo.png'
@@ -34,7 +34,7 @@ const Login = () => {
 		}
 
 		if(!email || !password) {
-			return alert('pleaes enter username and password')
+			return alert('please enter username and password')
 		}
 
 
@@ -89,13 +89,13 @@ const Login = () => {
 					type="password"
 					autoComplete="current-password"
 					handleInputChange={(event) => setPassword(event.target.value)} />
-			{ email && password &&
+				{ email && password &&
 					<input 
 						type="submit" 
 						value="Submit" 
 						onClick={onSubmitLogin}
-						/>
-			}
+					/>
+				}
 			</form>
 		</div>
 	);

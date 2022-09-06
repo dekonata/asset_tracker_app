@@ -40,7 +40,7 @@ const AssetTransferForm = ({asset_id, close_transfer, current_location}) => {
 			setTransferAssetIds(current => [...current, accessoryAssetId])
 		} else {
 			setTransferAssetIds(transferAssetIds.filter(accId => accId !== accessoryAssetId))
-			}
+		}
 
 	}
 
@@ -76,14 +76,15 @@ const AssetTransferForm = ({asset_id, close_transfer, current_location}) => {
 					handleInputChange={selected => setTransferTo(selected)}
 				/>
 				<label className="dib w4 pr5 mv2"> Transfer Date: </label>
-					<div className="dib">
-						<DatePicker 
-							selected={transferDate} 
-							onChange={(date) => setTransferDate(date)} /><br/>
-					</div>
+				<div className="dib">
+					<DatePicker 
+						selected={transferDate} 
+						dateFormat='dd/MM/yyyy'
+						onChange={(date) => setTransferDate(date)} /><br/>
+				</div>
 				{!gotLocationData 
 					?
-						<h1> LOADING </h1>
+					<h1> LOADING </h1>
 					: 
 					<AssetAccessoriesTransfer
 						accessory_list={locationData?.accessories}

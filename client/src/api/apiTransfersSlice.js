@@ -14,7 +14,14 @@ const transfersApi = emptySplitApi.injectEndpoints({
 			}),
 			invalidatesTags: ['Transfers', 'Asset', 'Accessory', 'Onestaff', 'Cabinets', 'Shelves']
 		}),
+		deleteAssetTransfer: builder.mutation({
+			query: transfer_id => ({
+				url: `/transfers/deltransfer/${transfer_id}`,
+				method: 'DELETE'
+			}),
+			invalidatesTags: ['Transfers', 'Asset', 'Accessory', 'Onestaff', 'Cabinets', 'Shelves']
+		}),
 	})
 })
 
-export const { useGetAssetTransfersQuery, useAddAssetTransferMutation } = transfersApi;
+export const { useGetAssetTransfersQuery, useAddAssetTransferMutation, useDeleteAssetTransferMutation } = transfersApi;

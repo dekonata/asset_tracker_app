@@ -53,35 +53,35 @@ const AddNewCabinet = () => {
 		}
 	};
 
-return (
-	<div>	
-		<form>
-			<SuggestBox 
-				label="Cabinet ID:"
-				suggestlist= {isSuccess ? formattedIds : ['loading']}
-				addNewEnabled={true}
-				handleInputChange={(value) => setStorageID(value)}
+	return (
+		<div>	
+			<form>
+				<SuggestBox 
+					label="Cabinet ID:"
+					suggestlist= {isSuccess ? formattedIds : ['loading']}
+					addNewEnabled={true}
+					handleInputChange={(value) => setStorageID(value)}
 				/>
-			<SuggestBox 
-				label="Location:"
-				suggestlist= {isSuccess ? cabinetlists.locatedList : ['loading']}
-				addNewEnabled={true}
-				handleInputChange={(value) => setStorageLocation(value)}
+				<SuggestBox 
+					label="Location:"
+					suggestlist= {isSuccess ? cabinetlists.locatedList : ['loading']}
+					addNewEnabled={true}
+					handleInputChange={(value) => setStorageLocation(value)}
 				/>
-			<TextInput
-				label="Storage Description"
-				value={storageDescription}
-				handleInputChange={event => setStorageDescription(event.target.value)}
+				<TextInput
+					label="Storage Description"
+					value={storageDescription}
+					handleInputChange={event => setStorageDescription(event.target.value)}
 				/>
-			{ storageID  && storageLocation && setStorageDescription &&
+				{ storageID  && storageLocation && setStorageDescription &&
 				<input 
 					type="submit" 
 					value="Submit" 
 					onClick={onSubmitNewStaff}
-					/>
-			}
-		</form>
-	</div>
+				/>
+				}
+			</form>
+		</div>
 	)	
 }
 

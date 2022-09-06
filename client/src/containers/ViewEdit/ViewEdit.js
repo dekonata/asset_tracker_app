@@ -1,4 +1,4 @@
-import{ useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import SuggestBox from '../../components/SuggestBox/SuggestBox';
@@ -21,28 +21,28 @@ const ViewEdit= () => {
 
 	const returnViewEditType = (view_edit_type) => {
 		switch (view_edit_type){
-			case "Asset":
-				return (
-					<ViewEditAsset
-					/>
-				);
-			case "Location":
-				return (
-					<ViewEditStorage
-						/>
-				);
-			case "Staff":
-				return (
-					<ViewEditStaff
-					/>
-				);
-			case "Accessories":
-				return (
-					<ViewAllAccessories
-					/>
-				);				
-			default:
-				return <div></div>;
+		case "Asset":
+			return (
+				<ViewEditAsset
+				/>
+			);
+		case "Location":
+			return (
+				<ViewEditStorage
+				/>
+			);
+		case "Staff":
+			return (
+				<ViewEditStaff
+				/>
+			);
+		case "Accessories":
+			return (
+				<ViewAllAccessories
+				/>
+			);				
+		default:
+			return <div></div>;
 		}
 	}
 

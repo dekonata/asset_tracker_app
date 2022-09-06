@@ -1,7 +1,7 @@
 const {
 	getAssetTransfers,
-	getLastTransferLocation,
 	addAssetTransfer,
+	deleteTransfer,
 } = require('../../models/transfers.model.js');
 
 async function httpGetAssetTransfers(req, res) {
@@ -19,7 +19,18 @@ async function httpAddAssetTransfer(req, res) {
 	}
 }
 
+async function httpDeleteTransfer(req, res) {
+	try {
+		const transfer_id  = req.params.transfer_id;
+		const delTr = await deleteTransfer(transfer_id);
+		return res.status(200).json(delTr);
+	} catch (err) {
+		return res.status(400).json(err.message)
+	}
+}
+
 module.exports = {
 	httpGetAssetTransfers,
-	httpAddAssetTransfer
+	httpAddAssetTransfer,
+	httpDeleteTransfer
 }

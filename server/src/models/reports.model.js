@@ -42,7 +42,7 @@ async function getAssetLocationsReportStream() {
 			.rightJoin('asset_transfer', 'asset_transfer.location_id', 'all_locations.location_id')
 			.rightJoin('all_assets', 'asset_transfer.asset_id', 'all_assets.asset_id')
 			.orderBy(['asset_transfer.asset_id', {column: 'transfer_date', order: 'desc'}])
-			// .stream()
+			.stream()
 
 		return stream
 	} catch(err) {
@@ -65,7 +65,7 @@ async function getLocationAssetsReportStream() {
 			.from('all_locations')
 			.leftJoin('all_asset_locations', 'all_asset_locations.location_id', 'all_locations.location_id')
 			.leftJoin('all_assets', 'all_assets.asset_id', 'all_asset_locations.asset_id')
-			// .stream();
+			.stream();
 
 		return stream;
 		} catch(err) {
@@ -73,8 +73,26 @@ async function getLocationAssetsReportStream() {
 		}
 }
 
+async function getStaffDetailReportStream() {
+	try {
+		const stream = await
+			db.select(
+				'staff_id',
+				'firstname',
+				'lastname',
+				'email',
+				'access'
+			)
+			.from('staff');
+		
+		return stream;
+	} catch(err) {
+		throw(err);
+	}
+}
+
 async function test() {
-	const result =  await getLocationAssetsReportStream();
+	const result =  await getStaffDetailReportStream();
 	console.log(result)
 	}
 

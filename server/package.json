@@ -25,7 +25,8 @@
     "passport": "^0.5.3",
     "passport-json": "^1.2.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "pg-query-stream": "^4.2.4"
   },
   "devDependencies": {
     "jest": "^27.5.1",

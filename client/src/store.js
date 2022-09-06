@@ -12,17 +12,17 @@ import suggestListReducer from './components/SuggestBox/suggestBoxSlice';
 
 
 export default configureStore({
-  reducer: {
-    user: loginReducer,
-    viewedit: viewEditReducer,
-    route: navibarReducer,
-    asset: assetCardReducer,
-    accessory: accessoryCardReducer,
-    staff: staffCardReducer,
-    locations: locationCardReducer,
-    suggestlists: suggestListReducer,
-    [emptySplitApi.reducerPath]: emptySplitApi.reducer
-  },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat(emptySplitApi.middleware)
+	reducer: {
+		user: loginReducer,
+		viewedit: viewEditReducer,
+		route: navibarReducer,
+		asset: assetCardReducer,
+		accessory: accessoryCardReducer,
+		staff: staffCardReducer,
+		locations: locationCardReducer,
+		suggestlists: suggestListReducer,
+		[emptySplitApi.reducerPath]: emptySplitApi.reducer
+	},
+	middleware: getDefaultMiddleware =>
+		getDefaultMiddleware().concat(emptySplitApi.middleware)
 });

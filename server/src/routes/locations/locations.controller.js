@@ -41,6 +41,9 @@ async function httpGetOneLocation(req, res) {
 			case 'STAFF':
 				location_id = await getLocationIDByTypeID('staff', location_type_id);
 				break
+			case 'DIS':
+				location_id = 99;
+				break
 			default:
 				return res.status(400).json('Invalid Location id');
 		}

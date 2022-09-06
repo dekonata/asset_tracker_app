@@ -10,8 +10,8 @@ import {
 	useAddMultipleAssetsMutation,
 	useGetAssetListsQuery,
 
-	 } 
-	 from '../api/apiAssetSlice';
+} 
+	from '../api/apiAssetSlice';
 
 const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc']
 
@@ -58,7 +58,7 @@ const AddNewAsset = () => {
 		setAccPostData(current => [...current, baseAccData]);
 	}
 
-	const updateAccData = (accData, id) => {
+	const updateAccData = (accData) => {
 		const newValue = accData.data;
 		// map over accessory object state and update at id
 		const newState = accPostData.map(acc => {
@@ -85,8 +85,8 @@ const AddNewAsset = () => {
 					addAccBaseState={addAccBaseState}
 					updateAccData={updateAccData}
 					removeAccessory={removeAccessory}
-					/>
-				)
+				/>
+			)
 		}
 		return addlist;
 	}
@@ -135,7 +135,7 @@ const AddNewAsset = () => {
 
 		// remove accessory ids for submission - not expected by server
 		const accPostDataNoIds = accPostData.map((acc) => {
-			const {id, ...accNoId} = acc;
+			const {...accNoId} = acc;
 			return accNoId
 		})
 
@@ -172,18 +172,19 @@ const AddNewAsset = () => {
 	return (
 		<div className="pt2">
 			{!isSuccess
-				 ? 
-				 	<h1> LOADING </h1>
-				 :
-				 <div>
+				? 
+				<h1> LOADING </h1>
+				:
+				<div>
 					<form className="bb">
 						<div className="">
 							<label className="dib w4 pr5 mv2"> Date Received: </label>
-								<div className="dib">
-									<DatePicker
-										selected={transfer_date} 
-										onChange={(date) => setTransferDate(date)} /><br/>
-								</div>
+							<div className="dib">
+								<DatePicker
+									selected={transfer_date} 
+									dateFormat='dd/MM/yyyy'
+									onChange={(date) => setTransferDate(date)} /><br/>
+							</div>
 						</div>
 						<SuggestBox 
 							label="Asset Type:"
@@ -191,53 +192,53 @@ const AddNewAsset = () => {
 							suggestlist={ASSET_TYPES} 
 							addNewEnabled={false}
 							handleInputChange={input_value => setAssetType(input_value)}
-							/>
+						/>
 						{(asset_type === 'misc') &&
 							<TextInput
 								label="Description"
 								value={description}
 								handleInputChange={event => setDescription(event.target.value)}
-								/> 
-							}
+							/> 
+						}
 						<SuggestBox 
 							label="Make:"
 							initial_input={make} 
 							suggestlist={assetlists[asset_type.toLowerCase()]?.makeList}
 							addNewEnabled={true} 
 							handleInputChange={input_value => setMake(input_value)}
-							/>
+						/>
 						<SuggestBox 
 							label="Model:"
 							initial_input={model} 
 							suggestlist={assetlists[asset_type.toLowerCase()]?.modelList} 
 							addNewEnabled={true} 
 							handleInputChange={input_value => setModel(input_value)}
-							/>	
+						/>	
 						<SuggestBox 
 							label="Condition:"
 							initial_input={asset_condition} 
 							suggestlist={assetlists[asset_type.toLowerCase()]?.conditionList} 
 							addNewEnabled={true} 
 							handleInputChange={input_value => setCondition(input_value)}
-							/>	
+						/>	
 						<TextInput
 							label="Serial Number:"
 							value={serialnumber}
 							handleInputChange={event => setSerialNumber(event.target.value)}
-							/>
+						/>
 						{(asset_type.toLowerCase() === 'cellphone' || asset_type.toLowerCase() === 'modem') &&
 							<TextInput
 								label="IMEI"
 								value={imei}
 								handleInputChange={event => setImei(event.target.value)}
-								/> 
-							}
+							/> 
+						}
 						{/*function returns Add Accessory components */}
 						{addAccessories()}
 						<button
 							type="button"
 							onClick={(event) => addAccessory(event)}
-							> Add Accessory </button><br></br>
+						> Add Accessory </button><br></br>
 
 						{/*Conditionally render submit button only if fields specified have been filled*/}
 						{ asset_type && transfer_date && make && model && serialnumber && asset_condition && checkAccData() &&
@@ -245,7 +246,7 @@ const AddNewAsset = () => {
 								type="submit" 
 								value="Submit" 
 								onClick={onSubmitAddNewAsset}
-								/>
+							/>
 						}
 					</form>
 				</div>
