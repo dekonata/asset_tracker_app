@@ -41,7 +41,7 @@ const Login = () => {
 		const loginData = {email, password};
 
 		try {
-			const url = 'http://localhost:5000/auth/local/'
+			const url = process.env.REACT_APP_LOGIN_URL;
 			const config = {
 				method: 'POST',
 				credentials: 'include',
