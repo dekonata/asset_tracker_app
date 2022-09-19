@@ -5,13 +5,14 @@ import AddNewStaff from '../pages/AddNewStaff';
 import AddNewAccessory from '../pages/AddNewAccessory';
 import AddNewCabinet from '../pages/AddNewCabinet';
 import AddNewShelf from '../pages/AddNewShelf'
+import AddNewLocation from '../pages/AddNewLocation'
 
 import SuggestBox from '../components/SuggestBox/SuggestBox';
 
 
 const Add = () => {
 	const [addValue, setAddValue] = useState('');
-	const [addList] = useState(['Asset', 'Cabinet', 'Shelf' ,'Staff', 'Accessory']);
+	const [addList] = useState(['Asset', 'Cabinet', 'Shelf' ,'Staff', 'Accessory', 'Location']);
 
 	const onAddSelect = (input_value) => {
 		setAddValue(input_value);
@@ -30,6 +31,8 @@ const Add = () => {
 		case "Accessory":
 			// Todo Create Add Accessory Page
 			return <AddNewAccessory/>
+		case "Location":
+			return <AddNewLocation/>
 		default:
 			return <div></div>
 		}

@@ -55,8 +55,9 @@ async function getLocationAssetsReportStream() {
 	try {
 		const stream = await
 			db.select(
-				db.raw(queryLocationCode()),		
-				db.raw(`TRIM(CONCAT(all_locations.firstname, ' ', all_locations.lastname, all_locations.description)) AS "Location"`),
+				db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00')) AS "Location Code"`),	
+				'location_name as Location Name',
+				db.raw(`TRIM(CONCAT(all_locations.firstname, ' ', all_locations.lastname, all_locations.description)) AS "Location Description"`),
 				db.raw(`COALESCE(all_asset_locations.asset_id::text, 'No Assets') AS "Asset ID"`),
 				db.raw(`COALESCE(all_assets.asset_type, 'N/A') AS "Asset Type"`),
 				db.raw(`CONCAT(all_assets.make, ' ', all_assets.model) AS "Asset Detail"`),
@@ -92,7 +93,7 @@ async function getStaffDetailReportStream() {
 }
 
 async function test() {
-	const result =  await getStaffDetailReportStream();
+	const result =  await getLocationAssetsReportStream();
 	console.log(result)
 	}
 

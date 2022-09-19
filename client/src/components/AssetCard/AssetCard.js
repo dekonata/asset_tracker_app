@@ -1,10 +1,11 @@
 import React, { useState} from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import ViewEditField from '../ViewEditField/ViewEditField';
 import AssetTransferForm from '../AssetTransferForm/AssetTransferForm';
 import AssetNoteList from '../AssetNoteList/AssetNoteList';
 
+import { setAsset } from './assetCardSlice'
 
 import { 
 	useGetOneAssetQuery,
@@ -15,6 +16,7 @@ import {
 const AssetCard = () => {
 	const [moveOpen, setMoveOpen] = useState(false);
 
+	const dispatch = useDispatch();
 	const serial_number = useSelector(state => state.asset.serial)
 
 	const {data:asset, isSuccess, refetch} = useGetOneAssetQuery(serial_number);
@@ -28,6 +30,10 @@ const AssetCard = () => {
 			payload: {
 				[data_field]: editvalue
 			}
+		}
+
+		if(data_field === "serialnumber") {
+			dispatch(setAsset(editvalue))
 		}
 
 		try {

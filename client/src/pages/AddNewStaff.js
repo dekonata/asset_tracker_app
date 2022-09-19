@@ -5,10 +5,8 @@ import { setRoute } from '../components/Navibar/navibarSlice';
 import SuggestBox from '../components/SuggestBox/SuggestBox';
 import TextInput from '../components/TextInput/TextInput';
 
-import {
-	useGetStaffListsQuery,
-	useAddStaffMutation
-} from '../api/apiStaffSlice'
+import { useGetLocationIdListQuery } from '../api/apiLocationsSlice';
+import { useAddStaffMutation } from '../api/apiStaffSlice';
 
 const AddNewStorageLocation = () => {
 	const [staffCodeId, setStaffCodeId] = useState('');
@@ -17,7 +15,7 @@ const AddNewStorageLocation = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [access, setAccess] = useState('');
-	const {data: stafflists, isSuccess }  = useGetStaffListsQuery();
+	const {data: stafflists, isSuccess }  = useGetLocationIdListQuery('staff');
 
 	const [addStaff] = useAddStaffMutation();
 
@@ -27,12 +25,13 @@ const AddNewStorageLocation = () => {
 		event.preventDefault()
 
 		//Extract only number id from staff code
-		const staff_id = staffCodeId.substring(5);
+		const location_type_id = staffCodeId.substring(5);
 
 		const postData = {
-			staff_id,
+			location_type_id,
 			firstname,
 			lastname,
+			location_name: firstname + ' ' + lastname,
 			email,
 			password,
 			access,
@@ -57,7 +56,7 @@ const AddNewStorageLocation = () => {
 			<form>
 				<SuggestBox 
 					label="Staff ID:"
-					suggestlist= {isSuccess ? stafflists.unusedIds : ['loading']}
+					suggestlist= {isSuccess ? stafflists : ['loading']}
 					addNewEnabled={false}
 					handleInputChange={(value) => setStaffCodeId(value)}
 				/>

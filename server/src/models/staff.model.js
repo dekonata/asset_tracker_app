@@ -4,20 +4,21 @@ const db = require('../services/knex.js');
 
 const { getUnusedIds } = require('../services/utils.js');
 
-const LOCATION_TYPE = 'Staff'
+const LOCATION_TYPE = 'staff'
 const ID_RANGE = 30
 
 const TEST_STAFF = {
-	staff_id: 1,
-	firstname: "admin",
-	lastname: "",
+	location_type_id: 2,
+	location_name: "Admin",
+	firstname: "Kriegler",
+	lastname: "Van der merwe",
 	email: 'admin@as.com',
 	password: "1q2w3e",
-	access: 'beking'
+	access: 'admin'
 };
 
 const TEST_EDIT_STAFF = {
-	staff_id: 5,
+	location_type_id: 5,
 	payload: {
 		firstname: 'Bemeny'
 	}
@@ -25,12 +26,12 @@ const TEST_EDIT_STAFF = {
 
 
 
-async function getOneStaff(staff_id) {
+async function getOneStaff(location_type_id) {
 	try {
 		const oneStaffQuery = 
 			await db.select(
-				'staff_id',
-				db.raw(`CONCAT('STAFF', TO_CHAR(staff_id, 'FM00')) AS parsed_id`),
+				'location_type_id',
+				db.raw(`CONCAT('STAFF', TO_CHAR(location_type_id, 'FM00')) AS parsed_id`),
 				'location_id',
 				'firstname',
 				'lastname',
@@ -38,7 +39,7 @@ async function getOneStaff(staff_id) {
 				'access'
 				)
 				.from('staff')
-				.where('staff_id', staff_id);
+				.where('location_type_id', location_type_id);
 	
 		return oneStaffQuery[0];
 	} catch(err) {
@@ -51,7 +52,7 @@ async function getOneStaff(staff_id) {
 async function getUser(email) {
 	try {	
 		const user = await db.select(
-			'staff_id',
+			'location_type_id',
 			'hash',
 			'access'
 			)
@@ -69,13 +70,13 @@ async function getUser(email) {
 async function getStaffSuggestLists() {
 	const staff = 
 		await db.select(
-			db.raw(`CONCAT('STAFF', TO_CHAR(staff_id, 'FM00'), ': ', firstname, ' ', lastname) AS name`),
-			db.raw(`CONCAT('STAFF', TO_CHAR(staff_id, 'FM00')) AS id`),
-			'staff_id'
+			db.raw(`CONCAT('STAFF', TO_CHAR(location_type_id, 'FM00'), ': ', firstname, ' ', lastname) AS name`),
+			db.raw(`CONCAT('STAFF', TO_CHAR(location_type_id, 'FM00')) AS id`),
+			'location_type_id'
 			)
 			.from('staff');
 
-	const usedNumbIds = staff.map(staff => staff.staff_id);
+	const usedNumbIds = staff.map(staff => staff.location_type_id);
 	const staffList = staff.map(staff => staff.name);
 	const usedIds = staff.map(staff => staff.id);
 	const unusedIds = getUnusedIds(ID_RANGE, [...usedNumbIds, 0 ])
@@ -100,7 +101,7 @@ async function addStaff(staff_data) {
 			const insert_data = Object.assign({}, data, transfer_location[0],  {hash:hash});
 			const staff = 
 				await trx('staff')
-					.insert(insert_data, 'staff_id');
+					.insert(insert_data, 'location_id');
 
 			return await staff;
 		});
@@ -111,10 +112,9 @@ async function addStaff(staff_data) {
 
 
 async function editStaff(edit_data) {
-	const {email} = edit_data
 	try {
 		return await db('staff')
-			.where('staff_id', edit_data.staff_id)
+			.where('location_type_id', edit_data.location_type_id)
 			.update(edit_data.payload, ['location_id']);
 	} catch(err) {
 		throw err;
@@ -122,12 +122,12 @@ async function editStaff(edit_data) {
 }
 
 async function editPassword(edit_data) {
-	const {password, staff_id} = edit_data
+	const {password, location_type_id} = edit_data
 	const saltRounds = 10;
 	const hash =  await bcrypt.hash(password, saltRounds);
 	return await db('staff')
 		.update('hash', hash)
-		.where('staff_id', staff_id) 
+		.where('location_type_id', location_type_id) 
 }
 
 

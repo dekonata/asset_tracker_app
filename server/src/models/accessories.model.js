@@ -21,7 +21,7 @@ async function getAllAccessories() {
 			'all_asset_locations.transfer_date',
 			'accessory.asset_id',
 			'all_asset_locations.location_id',
-			db.raw(queryParsedLocations()),
+			db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`),
 			)
 		.leftJoin('all_asset_locations', 'accessory.asset_id', 'all_asset_locations.asset_id')
 		.leftJoin('all_locations', 'all_locations.location_id', 'all_asset_locations.location_id')
@@ -37,7 +37,7 @@ async function getOneAccessory(acc_id) {
 				'accessory.accessory_type',
 				'accessory.make',
 				'accessory.description',
-				db.raw(queryParsedLocations()),
+				db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`),
 			)
 			.from('accessory')
 			.leftJoin('all_asset_locations', 'accessory.asset_id', 'all_asset_locations.asset_id')

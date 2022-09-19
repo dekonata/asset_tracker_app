@@ -13,10 +13,11 @@ async function validatePassword(password, hash) {
 // 
 async function verifyCallback(email, password, done) {
     const user = await getUser(email.toLowerCase());
+
     if(!user) { return done(null, false); }
     const verifyPassword = await validatePassword(password, user.hash);
     if(!verifyPassword) { return done(null, false); }
-    return done(null, user.staff_id);
+    return done(null, user.location_type_id);
 }
 
 

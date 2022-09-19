@@ -5,13 +5,14 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import AddAssetAccessory from '../components/AddAssetAccessory/AddAssetAccessory.js'
-
 import { 
 	useAddMultipleAssetsMutation,
 	useGetAssetListsQuery,
 
-} 
-	from '../api/apiAssetSlice';
+} from '../api/apiAssetSlice';
+import { useGetAllLocationsQuery } from '../api/apiLocationsSlice';
+
+
 
 const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc']
 
@@ -26,9 +27,10 @@ const AddNewAsset = () => {
 	const [description, setDescription] = useState('')
 	const [addAccessoryCount, setAddAccessoryCount] = useState(0)
 	const [accPostData, setAccPostData] = useState([])
-	// const [postData, setPostData] = useState([])
+	const [locationCode, setLocationCode] = useState([])
 
 	const {data: assetlists, isSuccess} = useGetAssetListsQuery();
+	const {data: locations, isSuccess: gotLocations} = useGetAllLocationsQuery();
 	const [addAssets] = useAddMultipleAssetsMutation();
 
 	// Increase the count of the number of "Add Accessory" elements
@@ -64,7 +66,7 @@ const AddNewAsset = () => {
 		const newState = accPostData.map(acc => {
 			if(acc.id === accData.id) {
 				const newAssetData = {...acc.asset, ...newValue};
-				return {...acc, asset: newAssetData, transfer_date: transfer_date};
+				return {...acc, asset: newAssetData, location_id: locations.codeToIdMap[locationCode],transfer_date: transfer_date};
 			}
 
 			return acc;
@@ -121,6 +123,7 @@ const AddNewAsset = () => {
 				model,
 				asset_condition,
 			},
+			location_id: locations.codeToIdMap[locationCode],
 			transfer_date,
 		}
 
@@ -171,7 +174,7 @@ const AddNewAsset = () => {
 
 	return (
 		<div className="pt2">
-			{!isSuccess
+			{!isSuccess || !gotLocations
 				? 
 				<h1> LOADING </h1>
 				:
@@ -226,6 +229,13 @@ const AddNewAsset = () => {
 							value={serialnumber}
 							handleInputChange={event => setSerialNumber(event.target.value)}
 						/>
+						<SuggestBox 
+							label="Location:"
+							initial_input={locationCode} 
+							suggestlist={locations?.selectList} 
+							addNewEnabled={false} 
+							handleInputChange={input_value => setLocationCode(input_value)}
+						/>	
 						{(asset_type.toLowerCase() === 'cellphone' || asset_type.toLowerCase() === 'modem') &&
 							<TextInput
 								label="IMEI"
@@ -241,7 +251,7 @@ const AddNewAsset = () => {
 						> Add Accessory </button><br></br>
 
 						{/*Conditionally render submit button only if fields specified have been filled*/}
-						{ asset_type && transfer_date && make && model && serialnumber && asset_condition && checkAccData() &&
+						{ asset_type && transfer_date && make && model && serialnumber && asset_condition && checkAccData() && locationCode &&
 							<input className="b"
 								type="submit" 
 								value="Submit" 

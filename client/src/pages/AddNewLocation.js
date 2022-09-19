@@ -12,14 +12,14 @@ import {
 
 const ID_CODE = 'CAB';
 
-const AddNewCabinet = () => {
+const AddNewLocation = () => {
 	const [storageID, setStorageID] = useState('');
 	const [locationName, setLocationName] = useState('');
 	const [storageLocation, setStorageLocation] = useState('');
 	const [storageDescription, setStorageDescription] = useState('');
-	const {data: idSuggsetList, isSuccess }  = useGetLocationIdListQuery('cabinet');
+	const {data: idSuggsetList, isSuccess }  = useGetLocationIdListQuery('other_location');
 
-	const [addCabinet] = useAddLocationMutation();
+	const [addStorage] = useAddLocationMutation();
 
 	const dispatch = useDispatch();
 
@@ -27,12 +27,12 @@ const AddNewCabinet = () => {
 		event.preventDefault()
 
 		//Extract only number id from staff code
-		const cabinet_id = storageID.substring(ID_CODE.length);
+		const other_location_id = storageID.substring(ID_CODE.length);
 
 		const postData = {
-			location_type: 'cabinet',
+			location_type: 'other_location',
 			location_data: {
-				location_type_id: cabinet_id,
+				location_type_id: other_location_id,
 				location_name: locationName,
 				located: storageLocation,
 				description: storageDescription
@@ -40,8 +40,8 @@ const AddNewCabinet = () => {
 		}
 		console.log(postData)
 		try {
-			await addCabinet(postData).unwrap();
-			alert('Cabinet Added');
+			await addStorage(postData).unwrap();
+			alert('Storge Location Added');
 			dispatch(setRoute(''));
 		} catch (err) {
 			console.log(err)
@@ -53,24 +53,24 @@ const AddNewCabinet = () => {
 		<div>	
 			<form>
 				<SuggestBox 
-					label="Cabinet ID:"
+					label="Location ID:"
 					suggestlist= {isSuccess ? idSuggsetList : ['loading']}
 					addNewEnabled={true}
 					handleInputChange={(value) => setStorageID(value)}
 				/>
 				<TextInput
-					label="Cabinet Name"
+					label="Location Name"
 					value={locationName}
 					handleInputChange={event => setLocationName(event.target.value)}
 				/>
 				<SuggestBox 
-					label="Location:"
+					label="Located:"
 					suggestlist= {isSuccess ? ['AS Office, Unit 4'] : ['loading']}
 					addNewEnabled={true}
 					handleInputChange={(value) => setStorageLocation(value)}
 				/>
 				<TextInput
-					label="Storage Description"
+					label="Location Description"
 					value={storageDescription}
 					handleInputChange={event => setStorageDescription(event.target.value)}
 				/>
@@ -86,4 +86,4 @@ const AddNewCabinet = () => {
 	)	
 }
 
-export default AddNewCabinet;
+export default AddNewLocation;

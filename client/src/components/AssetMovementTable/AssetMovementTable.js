@@ -76,7 +76,7 @@ const AssetMovementTable = ({ serialnumber }) => {
 												onClick={() => deleteMovement(transfer.transfer_id)}
 											>x</td>
 											:
-											<div></div>
+											<td></td>
 										}	
 									</tr>
 								)

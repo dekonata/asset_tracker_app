@@ -13,5 +13,8 @@
     "deploy-cluster": "npm run build --prefix client && npm run cluster --prefix server"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "js-cookie": "^3.0.1"
+  }
 }

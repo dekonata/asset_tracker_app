@@ -1,35 +1,27 @@
-import React, { useState, useMemo} from 'react';
+import React, { useState} from 'react';
 import { useDispatch } from 'react-redux';
-
-import { formatId } from '../utils/utils.js'
 
 import { setRoute } from '../components/Navibar/navibarSlice';
 import SuggestBox from '../components/SuggestBox/SuggestBox';
 import TextInput from '../components/TextInput/TextInput';
 
 import {
-	useGetShelfListsQuery,
-	useAddShelfMutation
-} from '../api/apiShelvesSlice'
+	useAddLocationMutation,
+	useGetLocationIdListQuery
+} from '../api/apiLocationsSlice';
 
 const ID_CODE = 'SHE';
-const ID_PADDING = 2
 
 const AddNewCabinet = () => {
 	const [storageID, setStorageID] = useState('');
+	const [locationName, setLocationName] = useState('')
 	const [storageLocation, setStorageLocation] = useState('');
 	const [storageDescription, setStorageDescription] = useState('');
-	const {data: shelflists, isSuccess }  = useGetShelfListsQuery();
+	const {data: idSuggsetList, isSuccess }  = useGetLocationIdListQuery('shelf');
 
-	const [addShelf] = useAddShelfMutation();
+	const [addShelf] = useAddLocationMutation();
 
 	const dispatch = useDispatch();
-
-	const formattedIds = useMemo(() => {
-		if(isSuccess) {
-			return shelflists.unusedIds.map(id => formatId(id, ID_CODE , ID_PADDING))
-		}
-	}, [shelflists, isSuccess]);
 
 	const onSubmitNewStaff = async (event) => {
 		event.preventDefault()
@@ -38,9 +30,13 @@ const AddNewCabinet = () => {
 		const shelf_id = storageID.substring(ID_CODE.length);
 
 		const postData = {
-			shelf_id: shelf_id,
-			located: storageLocation,
-			description: storageDescription
+			location_type: 'shelf',
+			location_data: {
+				location_type_id: shelf_id,
+				location_name: locationName,
+				located: storageLocation,
+				description: storageDescription
+			}
 		}
 
 		try {
@@ -58,13 +54,18 @@ const AddNewCabinet = () => {
 			<form>
 				<SuggestBox 
 					label="Shelf ID:"
-					suggestlist= {isSuccess ? formattedIds : ['loading']}
+					suggestlist= {isSuccess ? idSuggsetList : ['loading']}
 					addNewEnabled={true}
 					handleInputChange={(value) => setStorageID(value)}
 				/>
+				<TextInput
+					label="Shelf Name"
+					value={locationName}
+					handleInputChange={event => setLocationName(event.target.value)}
+				/>
 				<SuggestBox 
 					label="Location:"
-					suggestlist= {isSuccess ? shelflists.locatedList : ['loading']}
+					suggestlist= {isSuccess ? ['AS Offices, Unit 5'] : ['loading']}
 					addNewEnabled={true}
 					handleInputChange={(value) => setStorageLocation(value)}
 				/>

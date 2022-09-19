@@ -1,6 +1,8 @@
 const express = require('express');
 
 const {
+	httpAddLocation,
+	httpGetIdSuggestList,
 	httpGetAllLocationsList,
 	httpGetLocationSuggestlists,
 	httpGetOneLocation,
@@ -8,8 +10,10 @@ const {
 
 const locationsRouter = express.Router();
 
+locationsRouter.post('/add', httpAddLocation);
+locationsRouter.get('/typeids/:loctype', httpGetIdSuggestList);
 locationsRouter.get('/all', httpGetAllLocationsList);
 locationsRouter.get('/locationslists', httpGetLocationSuggestlists);
-locationsRouter.get('/:locationsid', httpGetOneLocation);
+locationsRouter.get('/location/:locationsid', httpGetOneLocation);
 
 module.exports = locationsRouter;

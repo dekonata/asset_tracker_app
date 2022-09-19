@@ -1,4 +1,6 @@
 const {
+	addLocation,
+	getIdSuggestlist,
 	getAllLocationsList,
 	getLocationIDByTypeID,
 	getLocationSuggestlists,
@@ -10,6 +12,27 @@ const {
 const { getOneCabinetId } = require('../../models/cabinets.model.js');
 const { getOneShelfId } = require('../../models/shelf.model.js');
 const { getOneStaff } = require('../../models/staff.model.js')
+
+async function httpAddLocation(req, res) {
+	try {
+			const location_data = req.body;
+			return res.status(200).json(await addLocation(location_data));
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
+
+async function httpGetIdSuggestList(req, res) {
+	try {
+		const locType = req.params.loctype;
+		return res.status(200).json(await getIdSuggestlist(locType));
+	} catch (err) {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+
+}
 
 async function httpGetAllLocationsList(req, res) {
 	return res.status(200).json(await getAllLocationsList());
@@ -24,6 +47,7 @@ async function httpGetOneLocation(req, res) {
 		// Id in frontend location type id formatted as CAB01 or SHE01 or STAFF01
 
 		const parsed_id = req.params.locationsid;
+		console.log(parsed_id)
 		// Extract the first part identifying the location taype CAB, SHE or STAFF
 		const location_type = parsed_id.match(/[a-zA-Z]+/)[0];
 		// Extract the location id number
@@ -41,8 +65,8 @@ async function httpGetOneLocation(req, res) {
 			case 'STAFF':
 				location_id = await getLocationIDByTypeID('staff', location_type_id);
 				break
-			case 'DIS':
-				location_id = 99;
+			case 'LOC':
+				location_id = await getLocationIDByTypeID('other_location', location_type_id);
 				break
 			default:
 				return res.status(400).json('Invalid Location id');
@@ -65,6 +89,8 @@ async function httpGetOneLocation(req, res) {
 }
 
 module.exports = {
+	httpAddLocation,
+	httpGetIdSuggestList,
 	httpGetAllLocationsList,
 	httpGetLocationSuggestlists,
 	httpGetOneLocation,

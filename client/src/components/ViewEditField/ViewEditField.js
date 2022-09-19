@@ -7,13 +7,14 @@ import TextInput from '../TextInput/TextInput'
 const ViewEditField = ({input_type, serial, suggestlist, label, value, data_field, handleEdit}) => {
 	// Editable data fields on View/Edit page
 	const [ editOpen, setEditOpen ] = useState(false);
-	const [ editValue, setEditValue ] = useState(value);
+	const [ editValue, setEditValue ] = useState("");
 
 	// Close edit if different stock item is selected and clear edit value
 	useEffect(() => {
 		setEditOpen(false)
+		setEditValue(value)
 		// setEditValue('')
-	}, [serial])
+	}, [serial, value])
 
 
 	const onSubmitEdit = (event) => {
@@ -43,7 +44,6 @@ const ViewEditField = ({input_type, serial, suggestlist, label, value, data_fiel
 					?
 					<div>
 						<form className="bg-light-silver">
-							{console.log(suggestlist)}
 							<SuggestBox 
 								initial_input={value}
 								label={label}

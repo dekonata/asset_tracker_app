@@ -14,13 +14,13 @@ const reportsRouter = require('./reports/reports.router');
 const api = express.Router();
 
 api.use('/assets/', assetsRouter);
-api.use('/accessories', accessoriesRouter);
+api.use('/accessories/', accessoriesRouter);
 api.use('/cabinets/', cabinetsRouter);
 api.use('/shelves/', shelvesRouter);
 api.use('/staff/', staffRouter);
-api.use('/transfers', transfersRouter);
-api.use('/locations', locationsRouter);
-api.use('/reports', reportsRouter);
+api.use('/transfers/', transfersRouter);
+api.use('/locations/', locationsRouter);
+api.use('/reports/', reportsRouter);
 
 
 module.exports = api;

@@ -20,13 +20,16 @@ const LocationCard = () => {
 				<div className="mb4">
 					<h3 className="bb">Locations Details</h3>
 					<div>
-						<span className="dib w4 pr5 mv2">Location ID:</span><span>{parsed_id}</span>
+						<span className="dib w4 pr5 mv2">Location ID:</span><span>{locationData?.location_code}</span>
 					</div>
 					<div>
 						<span className="dib w4 pr5 mv2">Location Type:</span><span>{locationData?.location_type}</span>
 					</div>
 					<div>
-						<span className="dib w4 pr5 mv2">Location:</span><span>{locationData?.located}</span>
+						<span className="dib w4 pr5 mv2">Location Name:</span><span>{locationData?.location_name}</span>
+					</div>     
+					<div>
+						<span className="dib w4 pr5 mv2">Located At:</span><span>{locationData?.located}</span>
 					</div>                                                        
 					<h3 className="bb">Assets</h3> 
 					<AssetList

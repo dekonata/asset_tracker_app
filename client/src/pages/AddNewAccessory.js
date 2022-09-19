@@ -7,15 +7,18 @@ import {
 	useGetAssetListsQuery,
 } 
 	from '../api/apiAssetSlice';
+import { useGetAllLocationsQuery } from '../api/apiLocationsSlice';
 
 
 const AddNewAccessory = () => {
 	const [accType, setAccType] = useState('');
 	const [make, setMake] = useState('');
 	const [description, setDescription] = useState('');
+	const [locationCode, setLocationCode] = useState([]);
 
 	const {data: assetlists, isSuccess } = useGetAssetListsQuery()
 	const [addAccessorry] = useAddAssetMutation()
+	const {data: locations, isSuccess: gotLocations} = useGetAllLocationsQuery();
 
 	const onSubmitAddAccessory = async (event) => {
 		event.preventDefault();
@@ -27,6 +30,7 @@ const AddNewAccessory = () => {
 				accessory_type: accType,
 				description: description
 			},
+			location_id: locations.codeToIdMap[locationCode],
 			transfer_date: new Date()
 		};
 
@@ -44,7 +48,7 @@ const AddNewAccessory = () => {
 
 	return (
 		<div>	
-			{ !isSuccess 
+			{ !isSuccess || !gotLocations
 				?
 				<h1> LOADING </h1>
 				:
@@ -68,6 +72,13 @@ const AddNewAccessory = () => {
 						value={description}
 						handleInputChange={event => setDescription(event.target.value)}
 					/>
+					<SuggestBox 
+						label="Location:"
+						initial_input={locationCode} 
+						suggestlist={locations?.selectList} 
+						addNewEnabled={false} 
+						handleInputChange={input_value => setLocationCode(input_value)}
+					/>	
 					{ accType && make && 
 							<input 
 								type="submit" 

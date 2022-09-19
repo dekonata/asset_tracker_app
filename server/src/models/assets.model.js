@@ -8,12 +8,14 @@ const DEFAULT_LOCATION_ID = '1';
 
 const TEST_ASSET = {    
 	asset_type: 'accessory',                                                                                                                                                   
-  asset: {
-		make: 'Microsoft', 
-		accessory_type: 'Mouse',
-		description: 'Bluetooth Mouse',
-	},                                                                                                                        
-  transfer_date: '2022-02-25'                                                                                                                                   
+	asset: {
+			make: 'Microsoft', 
+			accessory_type: 'Mouse',
+			description: 'Bluetooth Mouse',
+			location_id: 72
+		},       
+	location_id: 72,
+  	transfer_date: '2022-02-25'                                                                                                                                   
 }   
 
 const TEST_ASSET_LIST = [
@@ -23,8 +25,9 @@ const TEST_ASSET_LIST = [
 			make: 'Lenovo', 
 			model: 'E50',
 			asset_condition: 'new',
-			serialnumber: 'F80DF'
-		},                                                                                                                        
+			serialnumber: 'F80DF',
+		}, 
+		location_id: 72,                                                                                                                       
   		transfer_date: '2022-07-25' 
 	},
 	{
@@ -33,7 +36,8 @@ const TEST_ASSET_LIST = [
 			make: 'Lenovo', 
 			accessory_type: 'Power Supply',
 			description: 'Lenovo E50 PSU',
-		},                                                                                                                        
+		},      
+		location_id: 72,                                                                                                                  
   		transfer_date: '2022-02-25' 
 	},
 
@@ -94,7 +98,7 @@ async function getOneAsset(serial_number) {
 					'all_assets.make',
 					'all_assets.model',
 					'all_assets.asset_condition',
-					db.raw(queryParsedLocations()),
+					db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`)
 				)
 				.from('all_assets')
 				.leftJoin('all_asset_locations', 'all_assets.asset_id', 'all_asset_locations.asset_id')
@@ -160,7 +164,8 @@ async function getAssetSuggestLists() {
 
 
 async function addAsset(asset_data) {
-	const {asset_type, asset, transfer_date} = asset_data;
+	console.log(asset_data);
+	const {asset_type, asset, location_id, transfer_date} = asset_data;
 	try {
 		return await db.transaction(async trx => {
 			// Generate trasnfer_id for asset
@@ -180,7 +185,7 @@ async function addAsset(asset_data) {
 				await trx('asset_transfer')
 					.insert({
 						asset_id: addTransferAsset[0].asset_id,
-						location_id: DEFAULT_LOCATION_ID,
+						location_id: location_id,
 						transfer_date: transfer_date,
 					}, 'transfer_id');
 
@@ -195,11 +200,11 @@ async function addMultipleAssets(asset_list) {
 	try {
 		return await db.transaction(async trx => {
 			for(asset_data of asset_list) {
-				const {asset_type, asset, transfer_date} = asset_data;
+				const {asset_type, asset, transfer_date, location_id} = asset_data;
 				// Generate trasnfer_id for asset	
 				const addTransferAsset = 
-				await trx('transfer_id')
-					.insert({asset_type: asset_type}, 'asset_id');
+					await trx('transfer_id')
+						.insert({asset_type: asset_type}, 'asset_id');
 
 				// Add new Asset Transfer ID to asset data for inserting in asset table
 				const insertData = Object.assign({}, asset, addTransferAsset[0]); 
@@ -213,7 +218,7 @@ async function addMultipleAssets(asset_list) {
 					await trx('asset_transfer')
 						.insert({
 							asset_id: addTransferAsset[0].asset_id,
-							location_id: DEFAULT_LOCATION_ID,
+							location_id: location_id,
 							transfer_date: transfer_date,
 						}, 'transfer_id');
 			}
@@ -285,7 +290,7 @@ async function delAssetNote(note_id) {
 
 async function test() {
 	try {
-		const insert = await editAsset(TEST_EDIT);
+		const insert = await getOneAsset('F80DF');
 		console.log(insert)
 	} catch(err) {
 		console.log(err)

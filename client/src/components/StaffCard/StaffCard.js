@@ -23,7 +23,7 @@ const StaffCard = () => {
 
 	const handleEdit = async (data_field, editvalue) => {
 		const editData = {
-			staff_id: staffMember.staff_id,
+			location_type_id: staffMember.location_type_id,
 			payload: {
 				[data_field]: editvalue
 			}

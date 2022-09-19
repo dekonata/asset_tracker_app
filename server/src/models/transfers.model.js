@@ -16,7 +16,7 @@ async function getAssetTransfers(serialnumber) {
 			 	db.select(
 					'transfer_id',
 			 		'location_type',
-					db.raw(queryParsedLocations()),
+					 db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`),
 					'transfer_date', 
 					'capture_time'
 				)
@@ -57,7 +57,7 @@ async function getAccTransfers(acc_id) {
 	try {const transfersList =
 			 await 
 			 	db.select(
-					db.raw(queryParsedLocations()),
+					db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`),
 					'transfer_date', 
 					'capture_time'
 				)

@@ -21,7 +21,7 @@ const ViewEditStaff = () => {
 			<SuggestBox 
 				label="Search by Name:"
 				suggestlist={stafflists?.staffList}
-				initial_input={staffId}
+				initial_input={staffId ? 'STAFF' + staffId.padStart(2, '0') : ''}
 				handleInputChange={(staffmember) => dispatch(setStaffId((staffmember.substr(5,2))))}
 			/>
 			{staffId && 
