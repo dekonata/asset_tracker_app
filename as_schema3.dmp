@@ -1,0 +1,1454 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 13.3
+-- Dumped by pg_dump version 13.3
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: access_type; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.access_type AS ENUM (
+    'admin',
+    'user'
+);
+
+
+ALTER TYPE public.access_type OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: accessory; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.accessory (
+    accessory_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    accessory_type character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    description character varying(255)
+);
+
+
+ALTER TABLE public.accessory OWNER TO postgres;
+
+--
+-- Name: accessory_accessory_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.accessory_accessory_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.accessory_accessory_id_seq OWNER TO postgres;
+
+--
+-- Name: accessory_accessory_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.accessory_accessory_id_seq OWNED BY public.accessory.accessory_id;
+
+
+--
+-- Name: asset_transfer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.asset_transfer (
+    transfer_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    location_id integer NOT NULL,
+    transfer_date date NOT NULL,
+    capture_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.asset_transfer OWNER TO postgres;
+
+--
+-- Name: all_asset_locations; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.all_asset_locations AS
+ SELECT DISTINCT ON (asset_transfer.asset_id) asset_transfer.asset_id,
+    asset_transfer.location_id,
+    asset_transfer.transfer_date
+   FROM public.asset_transfer
+  ORDER BY asset_transfer.asset_id, asset_transfer.transfer_date DESC, asset_transfer.capture_time DESC;
+
+
+ALTER TABLE public.all_asset_locations OWNER TO postgres;
+
+--
+-- Name: cellphone; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cellphone (
+    cellphone_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL,
+    imei character(15) NOT NULL
+);
+
+
+ALTER TABLE public.cellphone OWNER TO postgres;
+
+--
+-- Name: laptop; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.laptop (
+    laptop_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.laptop OWNER TO postgres;
+
+--
+-- Name: misc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.misc (
+    misc_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    description character varying(25) NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.misc OWNER TO postgres;
+
+--
+-- Name: modem; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.modem (
+    modem_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL,
+    imei character(15) NOT NULL
+);
+
+
+ALTER TABLE public.modem OWNER TO postgres;
+
+--
+-- Name: monitor; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.monitor (
+    monitor_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.monitor OWNER TO postgres;
+
+--
+-- Name: pc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pc (
+    pc_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.pc OWNER TO postgres;
+
+--
+-- Name: tablet; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tablet (
+    tablet_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    serialnumber character varying(25) NOT NULL,
+    make character varying(25) NOT NULL,
+    model character varying(25) NOT NULL,
+    asset_condition character varying(25) NOT NULL,
+    imei character(15)
+);
+
+
+ALTER TABLE public.tablet OWNER TO postgres;
+
+--
+-- Name: all_assets; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.all_assets AS
+ SELECT cellphone.cellphone_id AS type_id,
+    'cellphone'::text AS asset_type,
+    cellphone.serialnumber,
+    cellphone.asset_id,
+    cellphone.make,
+    cellphone.model,
+    cellphone.asset_condition,
+    cellphone.imei
+   FROM public.cellphone
+UNION ALL
+ SELECT laptop.laptop_id AS type_id,
+    'laptop'::text AS asset_type,
+    laptop.serialnumber,
+    laptop.asset_id,
+    laptop.make,
+    laptop.model,
+    laptop.asset_condition,
+    ''::bpchar AS imei
+   FROM public.laptop
+UNION ALL
+ SELECT misc.misc_id AS type_id,
+    misc.description AS asset_type,
+    misc.serialnumber,
+    misc.asset_id,
+    misc.make,
+    misc.model,
+    misc.asset_condition,
+    ''::bpchar AS imei
+   FROM public.misc
+UNION ALL
+ SELECT modem.modem_id AS type_id,
+    'modem'::text AS asset_type,
+    modem.serialnumber,
+    modem.asset_id,
+    modem.make,
+    modem.model,
+    modem.asset_condition,
+    modem.imei
+   FROM public.modem
+UNION ALL
+ SELECT monitor.monitor_id AS type_id,
+    'monitor'::text AS asset_type,
+    monitor.serialnumber,
+    monitor.asset_id,
+    monitor.make,
+    monitor.model,
+    monitor.asset_condition,
+    ''::bpchar AS imei
+   FROM public.monitor
+UNION ALL
+ SELECT pc.pc_id AS type_id,
+    'pc'::text AS asset_type,
+    pc.serialnumber,
+    pc.asset_id,
+    pc.make,
+    pc.model,
+    pc.asset_condition,
+    ''::bpchar AS imei
+   FROM public.pc
+UNION ALL
+ SELECT tablet.tablet_id AS type_id,
+    'tablet'::text AS asset_type,
+    tablet.serialnumber,
+    tablet.asset_id,
+    tablet.make,
+    tablet.model,
+    tablet.asset_condition,
+    tablet.imei
+   FROM public.tablet
+UNION ALL
+ SELECT accessory.accessory_id AS type_id,
+    accessory.accessory_type AS asset_type,
+    NULL::character varying(25) AS serialnumber,
+    accessory.asset_id,
+    accessory.make,
+    ''::character varying(25) AS model,
+    ''::character varying(25) AS asset_condition,
+    ''::text AS imei
+   FROM public.accessory;
+
+
+ALTER TABLE public.all_assets OWNER TO postgres;
+
+--
+-- Name: cabinet; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cabinet (
+    location_type_id integer NOT NULL,
+    location_id integer NOT NULL,
+    location_name character varying(25) NOT NULL,
+    located character varying(25) NOT NULL,
+    description character varying(255)
+);
+
+
+ALTER TABLE public.cabinet OWNER TO postgres;
+
+--
+-- Name: other_location; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.other_location (
+    location_type_id integer NOT NULL,
+    location_id integer,
+    location_name character varying(25) NOT NULL,
+    description character varying(255),
+    located character varying(25)
+);
+
+
+ALTER TABLE public.other_location OWNER TO postgres;
+
+--
+-- Name: shelf; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.shelf (
+    location_type_id integer NOT NULL,
+    location_id integer NOT NULL,
+    location_name character varying(25) NOT NULL,
+    located character varying(25) NOT NULL,
+    description character varying(255)
+);
+
+
+ALTER TABLE public.shelf OWNER TO postgres;
+
+--
+-- Name: staff; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.staff (
+    location_type_id integer NOT NULL,
+    location_id integer NOT NULL,
+    location_name character varying(25) NOT NULL,
+    firstname character varying(25) NOT NULL,
+    lastname character varying(25) NOT NULL,
+    email character varying(255) NOT NULL,
+    hash character(60) NOT NULL,
+    access public.access_type NOT NULL
+);
+
+
+ALTER TABLE public.staff OWNER TO postgres;
+
+--
+-- Name: all_locations; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.all_locations AS
+ SELECT cabinet.location_type_id,
+    'cabinet'::text AS location_type,
+    'CAB'::text AS location_code,
+    cabinet.location_name,
+    cabinet.location_id,
+    cabinet.located,
+    cabinet.description,
+    ''::text AS firstname,
+    ''::text AS lastname
+   FROM public.cabinet
+UNION ALL
+ SELECT shelf.location_type_id,
+    'shelf'::text AS location_type,
+    'SHE'::text AS location_code,
+    shelf.location_name,
+    shelf.location_id,
+    shelf.located,
+    shelf.description,
+    ''::text AS firstname,
+    ''::text AS lastname
+   FROM public.shelf
+UNION ALL
+ SELECT staff.location_type_id,
+    'staff'::text AS location_type,
+    'STAFF'::text AS location_code,
+    staff.location_name,
+    staff.location_id,
+    ''::character varying AS located,
+    ''::character varying AS description,
+    staff.firstname,
+    staff.lastname
+   FROM public.staff
+UNION ALL
+ SELECT other_location.location_type_id,
+    'other_location'::text AS location_type,
+    'LOC'::text AS location_code,
+    other_location.location_name,
+    other_location.location_id,
+    ''::character varying AS located,
+    other_location.description,
+    ''::text AS firstname,
+    ''::text AS lastname
+   FROM public.other_location;
+
+
+ALTER TABLE public.all_locations OWNER TO postgres;
+
+--
+-- Name: asset_note; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.asset_note (
+    note_id integer NOT NULL,
+    asset_id integer NOT NULL,
+    note character varying(255) NOT NULL,
+    capture_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.asset_note OWNER TO postgres;
+
+--
+-- Name: asset_notes_note_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.asset_notes_note_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.asset_notes_note_id_seq OWNER TO postgres;
+
+--
+-- Name: asset_notes_note_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.asset_notes_note_id_seq OWNED BY public.asset_note.note_id;
+
+
+--
+-- Name: cabinet_cabinet_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cabinet_cabinet_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cabinet_cabinet_id_seq OWNER TO postgres;
+
+--
+-- Name: cabinet_cabinet_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cabinet_cabinet_id_seq OWNED BY public.cabinet.location_type_id;
+
+
+--
+-- Name: cellphone_cellphone_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.cellphone_cellphone_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cellphone_cellphone_id_seq OWNER TO postgres;
+
+--
+-- Name: cellphone_cellphone_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.cellphone_cellphone_id_seq OWNED BY public.cellphone.cellphone_id;
+
+
+--
+-- Name: laptop_laptop_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.laptop_laptop_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.laptop_laptop_id_seq OWNER TO postgres;
+
+--
+-- Name: laptop_laptop_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.laptop_laptop_id_seq OWNED BY public.laptop.laptop_id;
+
+
+--
+-- Name: location_code; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.location_code (
+    code character varying(10) NOT NULL,
+    location_type character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.location_code OWNER TO postgres;
+
+--
+-- Name: misc_accessory_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.misc_accessory_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.misc_accessory_id_seq OWNER TO postgres;
+
+--
+-- Name: misc_accessory_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.misc_accessory_id_seq OWNED BY public.misc.misc_id;
+
+
+--
+-- Name: modem_modem_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.modem_modem_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.modem_modem_id_seq OWNER TO postgres;
+
+--
+-- Name: modem_modem_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.modem_modem_id_seq OWNED BY public.modem.modem_id;
+
+
+--
+-- Name: monitor_monitor_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.monitor_monitor_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.monitor_monitor_id_seq OWNER TO postgres;
+
+--
+-- Name: monitor_monitor_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.monitor_monitor_id_seq OWNED BY public.monitor.monitor_id;
+
+
+--
+-- Name: other_location_other_location_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.other_location_other_location_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.other_location_other_location_id_seq OWNER TO postgres;
+
+--
+-- Name: other_location_other_location_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.other_location_other_location_id_seq OWNED BY public.other_location.location_type_id;
+
+
+--
+-- Name: pc_pc_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pc_pc_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.pc_pc_id_seq OWNER TO postgres;
+
+--
+-- Name: pc_pc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pc_pc_id_seq OWNED BY public.pc.pc_id;
+
+
+--
+-- Name: shelf_shelf_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.shelf_shelf_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.shelf_shelf_id_seq OWNER TO postgres;
+
+--
+-- Name: shelf_shelf_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.shelf_shelf_id_seq OWNED BY public.shelf.location_type_id;
+
+
+--
+-- Name: staff_staff_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.staff_staff_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.staff_staff_id_seq OWNER TO postgres;
+
+--
+-- Name: staff_staff_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.staff_staff_id_seq OWNED BY public.staff.location_type_id;
+
+
+--
+-- Name: tablet_tablet_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.tablet_tablet_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tablet_tablet_id_seq OWNER TO postgres;
+
+--
+-- Name: tablet_tablet_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.tablet_tablet_id_seq OWNED BY public.tablet.tablet_id;
+
+
+--
+-- Name: transfer_id; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.transfer_id (
+    asset_id integer NOT NULL,
+    asset_type character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.transfer_id OWNER TO postgres;
+
+--
+-- Name: transfer_asset_asset_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.transfer_asset_asset_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transfer_asset_asset_id_seq OWNER TO postgres;
+
+--
+-- Name: transfer_asset_asset_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.transfer_asset_asset_id_seq OWNED BY public.transfer_id.asset_id;
+
+
+--
+-- Name: transfer_location; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.transfer_location (
+    location_id integer NOT NULL,
+    location_type character varying(25) NOT NULL
+);
+
+
+ALTER TABLE public.transfer_location OWNER TO postgres;
+
+--
+-- Name: transfer_location_location_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.transfer_location_location_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transfer_location_location_id_seq OWNER TO postgres;
+
+--
+-- Name: transfer_location_location_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.transfer_location_location_id_seq OWNED BY public.transfer_location.location_id;
+
+
+--
+-- Name: transfer_notes; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.transfer_notes (
+    note_id integer NOT NULL,
+    transfer_id integer NOT NULL,
+    note character varying(255) NOT NULL,
+    capture_time timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.transfer_notes OWNER TO postgres;
+
+--
+-- Name: transfer_notes_note_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.transfer_notes_note_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transfer_notes_note_id_seq OWNER TO postgres;
+
+--
+-- Name: transfer_notes_note_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.transfer_notes_note_id_seq OWNED BY public.transfer_notes.note_id;
+
+
+--
+-- Name: transfer_transfer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.transfer_transfer_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transfer_transfer_id_seq OWNER TO postgres;
+
+--
+-- Name: transfer_transfer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.transfer_transfer_id_seq OWNED BY public.asset_transfer.transfer_id;
+
+
+--
+-- Name: accessory accessory_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.accessory ALTER COLUMN accessory_id SET DEFAULT nextval('public.accessory_accessory_id_seq'::regclass);
+
+
+--
+-- Name: asset_note note_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_note ALTER COLUMN note_id SET DEFAULT nextval('public.asset_notes_note_id_seq'::regclass);
+
+
+--
+-- Name: asset_transfer transfer_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_transfer ALTER COLUMN transfer_id SET DEFAULT nextval('public.transfer_transfer_id_seq'::regclass);
+
+
+--
+-- Name: cabinet location_type_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cabinet ALTER COLUMN location_type_id SET DEFAULT nextval('public.cabinet_cabinet_id_seq'::regclass);
+
+
+--
+-- Name: cellphone cellphone_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cellphone ALTER COLUMN cellphone_id SET DEFAULT nextval('public.cellphone_cellphone_id_seq'::regclass);
+
+
+--
+-- Name: laptop laptop_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.laptop ALTER COLUMN laptop_id SET DEFAULT nextval('public.laptop_laptop_id_seq'::regclass);
+
+
+--
+-- Name: misc misc_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.misc ALTER COLUMN misc_id SET DEFAULT nextval('public.misc_accessory_id_seq'::regclass);
+
+
+--
+-- Name: modem modem_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modem ALTER COLUMN modem_id SET DEFAULT nextval('public.modem_modem_id_seq'::regclass);
+
+
+--
+-- Name: monitor monitor_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monitor ALTER COLUMN monitor_id SET DEFAULT nextval('public.monitor_monitor_id_seq'::regclass);
+
+
+--
+-- Name: other_location location_type_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_location ALTER COLUMN location_type_id SET DEFAULT nextval('public.other_location_other_location_id_seq'::regclass);
+
+
+--
+-- Name: pc pc_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pc ALTER COLUMN pc_id SET DEFAULT nextval('public.pc_pc_id_seq'::regclass);
+
+
+--
+-- Name: shelf location_type_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shelf ALTER COLUMN location_type_id SET DEFAULT nextval('public.shelf_shelf_id_seq'::regclass);
+
+
+--
+-- Name: staff location_type_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff ALTER COLUMN location_type_id SET DEFAULT nextval('public.staff_staff_id_seq'::regclass);
+
+
+--
+-- Name: tablet tablet_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tablet ALTER COLUMN tablet_id SET DEFAULT nextval('public.tablet_tablet_id_seq'::regclass);
+
+
+--
+-- Name: transfer_id asset_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_id ALTER COLUMN asset_id SET DEFAULT nextval('public.transfer_asset_asset_id_seq'::regclass);
+
+
+--
+-- Name: transfer_location location_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_location ALTER COLUMN location_id SET DEFAULT nextval('public.transfer_location_location_id_seq'::regclass);
+
+
+--
+-- Name: transfer_notes note_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_notes ALTER COLUMN note_id SET DEFAULT nextval('public.transfer_notes_note_id_seq'::regclass);
+
+
+--
+-- Name: accessory accessory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.accessory
+    ADD CONSTRAINT accessory_pkey PRIMARY KEY (accessory_id);
+
+
+--
+-- Name: asset_note asset_notes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_note
+    ADD CONSTRAINT asset_notes_pkey PRIMARY KEY (note_id);
+
+
+--
+-- Name: cabinet cabinet_location_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cabinet
+    ADD CONSTRAINT cabinet_location_name_key UNIQUE (location_name);
+
+
+--
+-- Name: cabinet cabinet_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cabinet
+    ADD CONSTRAINT cabinet_pkey PRIMARY KEY (location_type_id);
+
+
+--
+-- Name: cellphone cellphone_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cellphone
+    ADD CONSTRAINT cellphone_pkey PRIMARY KEY (cellphone_id);
+
+
+--
+-- Name: cellphone cellphone_serialnumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cellphone
+    ADD CONSTRAINT cellphone_serialnumber_key UNIQUE (serialnumber);
+
+
+--
+-- Name: laptop laptop_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.laptop
+    ADD CONSTRAINT laptop_pkey PRIMARY KEY (laptop_id);
+
+
+--
+-- Name: laptop laptop_serialnumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.laptop
+    ADD CONSTRAINT laptop_serialnumber_key UNIQUE (serialnumber);
+
+
+--
+-- Name: location_code loc_code_location_type_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.location_code
+    ADD CONSTRAINT loc_code_location_type_key UNIQUE (location_type);
+
+
+--
+-- Name: location_code loc_code_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.location_code
+    ADD CONSTRAINT loc_code_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: misc misc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.misc
+    ADD CONSTRAINT misc_pkey PRIMARY KEY (misc_id);
+
+
+--
+-- Name: misc misc_serial_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.misc
+    ADD CONSTRAINT misc_serial_number_key UNIQUE (serialnumber);
+
+
+--
+-- Name: modem modem_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modem
+    ADD CONSTRAINT modem_pkey PRIMARY KEY (modem_id);
+
+
+--
+-- Name: modem modem_serialnumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modem
+    ADD CONSTRAINT modem_serialnumber_key UNIQUE (serialnumber);
+
+
+--
+-- Name: monitor monitor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monitor
+    ADD CONSTRAINT monitor_pkey PRIMARY KEY (monitor_id);
+
+
+--
+-- Name: monitor monitor_serialnumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monitor
+    ADD CONSTRAINT monitor_serialnumber_key UNIQUE (serialnumber);
+
+
+--
+-- Name: other_location other_location_loc_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_location
+    ADD CONSTRAINT other_location_loc_name_key UNIQUE (location_name);
+
+
+--
+-- Name: other_location other_location_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_location
+    ADD CONSTRAINT other_location_pkey PRIMARY KEY (location_type_id);
+
+
+--
+-- Name: pc pc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pc
+    ADD CONSTRAINT pc_pkey PRIMARY KEY (pc_id);
+
+
+--
+-- Name: pc pc_serialnumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pc
+    ADD CONSTRAINT pc_serialnumber_key UNIQUE (serialnumber);
+
+
+--
+-- Name: shelf shelf_location_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shelf
+    ADD CONSTRAINT shelf_location_name_key UNIQUE (location_name);
+
+
+--
+-- Name: shelf shelf_location_name_ukey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shelf
+    ADD CONSTRAINT shelf_location_name_ukey UNIQUE (location_name);
+
+
+--
+-- Name: shelf shelf_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shelf
+    ADD CONSTRAINT shelf_pkey PRIMARY KEY (location_type_id);
+
+
+--
+-- Name: staff staff_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT staff_email_key UNIQUE (email);
+
+
+--
+-- Name: staff staff_location_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT staff_location_name_key UNIQUE (location_name);
+
+
+--
+-- Name: staff staff_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT staff_pkey PRIMARY KEY (location_type_id);
+
+
+--
+-- Name: tablet tablet_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tablet
+    ADD CONSTRAINT tablet_pkey PRIMARY KEY (tablet_id);
+
+
+--
+-- Name: transfer_id transfer_asset_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_id
+    ADD CONSTRAINT transfer_asset_pkey PRIMARY KEY (asset_id);
+
+
+--
+-- Name: transfer_location transfer_location_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_location
+    ADD CONSTRAINT transfer_location_pkey PRIMARY KEY (location_id);
+
+
+--
+-- Name: transfer_notes transfer_notes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_notes
+    ADD CONSTRAINT transfer_notes_pkey PRIMARY KEY (note_id);
+
+
+--
+-- Name: asset_transfer transfer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_transfer
+    ADD CONSTRAINT transfer_pkey PRIMARY KEY (transfer_id);
+
+
+--
+-- Name: accessory accessory_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.accessory
+    ADD CONSTRAINT accessory_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: asset_note asset_notes_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_note
+    ADD CONSTRAINT asset_notes_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id);
+
+
+--
+-- Name: cabinet cabinet_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cabinet
+    ADD CONSTRAINT cabinet_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.transfer_location(location_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: cellphone cellphone_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cellphone
+    ADD CONSTRAINT cellphone_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: laptop laptop_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.laptop
+    ADD CONSTRAINT laptop_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: misc misc_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.misc
+    ADD CONSTRAINT misc_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: modem modem_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.modem
+    ADD CONSTRAINT modem_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: monitor monitor_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.monitor
+    ADD CONSTRAINT monitor_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: other_location other_location_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.other_location
+    ADD CONSTRAINT other_location_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.transfer_location(location_id);
+
+
+--
+-- Name: pc pc_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pc
+    ADD CONSTRAINT pc_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: shelf shelf_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shelf
+    ADD CONSTRAINT shelf_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.transfer_location(location_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: staff staff_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT staff_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.transfer_location(location_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: tablet tablet_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tablet
+    ADD CONSTRAINT tablet_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: asset_transfer transfer_asset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_transfer
+    ADD CONSTRAINT transfer_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.transfer_id(asset_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: asset_transfer transfer_location_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.asset_transfer
+    ADD CONSTRAINT transfer_location_id_fkey FOREIGN KEY (location_id) REFERENCES public.transfer_location(location_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: transfer_location transfer_location_location_type_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_location
+    ADD CONSTRAINT transfer_location_location_type_fk FOREIGN KEY (location_type) REFERENCES public.location_code(location_type);
+
+
+--
+-- Name: transfer_notes transfer_notes_transfer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.transfer_notes
+    ADD CONSTRAINT transfer_notes_transfer_id_fkey FOREIGN KEY (transfer_id) REFERENCES public.asset_transfer(transfer_id);
+
+
+--
+-- Name: TABLE accessory; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.accessory TO as_asset_tracker;
+
+
+--
+-- Name: TABLE asset_transfer; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.asset_transfer TO as_asset_tracker;
+
+
+--
+-- Name: TABLE all_asset_locations; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.all_asset_locations TO as_asset_tracker;
+
+
+--
+-- Name: TABLE cellphone; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.cellphone TO as_asset_tracker;
+
+
+--
+-- Name: TABLE laptop; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.laptop TO as_asset_tracker;
+
+
+--
+-- Name: TABLE misc; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.misc TO as_asset_tracker;
+
+
+--
+-- Name: TABLE modem; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.modem TO as_asset_tracker;
+
+
+--
+-- Name: TABLE monitor; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.monitor TO as_asset_tracker;
+
+
+--
+-- Name: TABLE pc; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.pc TO as_asset_tracker;
+
+
+--
+-- Name: TABLE tablet; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.tablet TO as_asset_tracker;
+
+
+--
+-- Name: TABLE all_assets; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.all_assets TO as_asset_tracker;
+
+
+--
+-- Name: TABLE cabinet; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.cabinet TO as_asset_tracker;
+
+
+--
+-- Name: TABLE shelf; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.shelf TO as_asset_tracker;
+
+
+--
+-- Name: TABLE staff; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.staff TO as_asset_tracker;
+
+
+--
+-- Name: TABLE transfer_id; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.transfer_id TO as_asset_tracker;
+
+
+--
+-- Name: TABLE transfer_location; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.transfer_location TO as_asset_tracker;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

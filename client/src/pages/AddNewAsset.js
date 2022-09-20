@@ -196,7 +196,7 @@ const AddNewAsset = () => {
 							addNewEnabled={false}
 							handleInputChange={input_value => setAssetType(input_value)}
 						/>
-						{(asset_type === 'misc') &&
+						{(asset_type.toLocaleLowerCase() === 'misc') &&
 							<TextInput
 								label="Description"
 								value={description}
