@@ -3,7 +3,7 @@ import React from 'react';
 const reports = () => {
 	return (
 		<div>
-			<a href="http://localhost:5000/v1/reports/locationreport"> Location Asset Report </a>
+			<a href="/v1/reports/locationreport"> Location Asset Report </a>
 		</div>
 	)
 };

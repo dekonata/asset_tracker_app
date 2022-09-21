@@ -1,0 +1,6 @@
+ALTER TABLE cellphone ADD COLUMN description VARCHAR(255);
+ALTER TABLE laptop ADD COLUMN description VARCHAR(255);
+ALTER TABLE modem ADD COLUMN description VARCHAR(255);
+ALTER TABLE monitor ADD COLUMN description VARCHAR(255);
+ALTER TABLE pc ADD COLUMN description VARCHAR(255);
+ALTER TABLE tablet ADD COLUMN description VARCHAR(255);

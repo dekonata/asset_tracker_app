@@ -196,13 +196,6 @@ const AddNewAsset = () => {
 							addNewEnabled={false}
 							handleInputChange={input_value => setAssetType(input_value)}
 						/>
-						{(asset_type.toLocaleLowerCase() === 'misc') &&
-							<TextInput
-								label="Description"
-								value={description}
-								handleInputChange={event => setDescription(event.target.value)}
-							/> 
-						}
 						<SuggestBox 
 							label="Make:"
 							initial_input={make} 
@@ -217,6 +210,11 @@ const AddNewAsset = () => {
 							addNewEnabled={true} 
 							handleInputChange={input_value => setModel(input_value)}
 						/>	
+						<TextInput
+							label="Description:"
+							value={description}
+							handleInputChange={event => setDescription(event.target.value)}
+						/>
 						<SuggestBox 
 							label="Condition:"
 							initial_input={asset_condition} 

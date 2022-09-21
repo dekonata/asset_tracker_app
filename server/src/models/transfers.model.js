@@ -159,7 +159,7 @@ async function deleteTransfer(transfer_id) {
 
 async function test() {
 	try {
-		const dates = await deleteTransfer(1000);
+		const dates = await getAssetTransfers('F19NKG7J');
 		console.log(dates)
 	} catch (err) {
 		console.log(err)

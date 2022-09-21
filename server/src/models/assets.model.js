@@ -76,7 +76,7 @@ async function getAllTypeAssets(asset_type) {
 			.select(
 					'serialnumber',
 					db.raw(`CONCAT(make, ': ', model) AS model`),
-					db.raw(queryParsedLocations()),
+					db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`),
 					'asset_condition'
 				)
 				.leftJoin('asset_transfer', 'asset_transfer.asset_id',`${asset_type}.asset_id`)
@@ -97,6 +97,7 @@ async function getOneAsset(serial_number) {
 					'all_assets.serialnumber',
 					'all_assets.make',
 					'all_assets.model',
+					'all_assets.description',
 					'all_assets.asset_condition',
 					db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00'), ': ', location_name) as location`)
 				)

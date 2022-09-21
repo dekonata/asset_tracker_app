@@ -77,6 +77,15 @@ const AssetCard = () => {
 						handleEdit={handleEdit}
 					/>
 					<ViewEditField
+						input_type='text'
+						asset_type={asset?.asset_type}
+						serial={serial_number}
+						label= 'Description:'
+						value={asset?.description}
+						data_field='description'
+						handleEdit={handleEdit}
+					/>
+					<ViewEditField
 						input_type='suggest'
 						asset_type={asset?.asset_type}
 						serial={serial_number}
