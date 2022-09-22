@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 
 import {useGetAssetTransfersQuery, useDeleteAssetTransferMutation } from '../../api/apiTransfersSlice';
 import { setViewEditPage } from '../../containers/ViewEdit/viewEditSlice.js';
+import { setAsset } from '../AssetCard/assetCardSlice';
 import { setLocationId } from '../LocationCard/locationCardSlice.js';
 import { setStaffId } from '../StaffCard/staffCardSlice.js'
 
@@ -27,11 +28,20 @@ const AssetMovementTable = ({ serialnumber }) => {
 
 	const deleteMovement = async (transfer_id) => {
 		try {
+			if(transferslist.length === 1) {
+				if(confirm('Deleting last transer will delete asset. Are you sure you want to proceed')) {
+					await deleteTransfer(transfer_id);
+					dispatch(setAsset(''));
+					return;
+				}
+				
+			} 
 			if(confirm("Are you sure you want to delete the transfer")) {
 				await deleteTransfer(transfer_id);
 				refetch();
+				return;
 			}
-			return
+			
 		} catch(err) {
 			console.log(err);
 			alert('Delete transfer failed')

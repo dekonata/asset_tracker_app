@@ -132,29 +132,63 @@ async function addAssetTransfer( transfer_data ) {
 	}
 }
 
+
 async function deleteTransfer(transfer_id) {
+	try {
 		const transferDetails = await 
 			db('asset_transfer')
-				.where('transfer_id', transfer_id)
-	
-		if(transferDetails.length) {
+				.where('transfer_id', transfer_id);
+		
+		if(!transferDetails[0]) {
+			throw("Transfer not found");
+		}
+
+		const asset_transfers = await db('asset_transfer')
+			.where('asset_id', transferDetails[0].asset_id)
+
+		console.log(asset_transfers);
+
+		// Delete asset if there is only 1 transfer
+		if(asset_transfers.length === 1) {			
+			const asset_id = transferDetails[0].asset_id;
+
+
+			const deleteAsset = await db.transaction(async trx => {
+				const delNotes = await trx('asset_note')
+					.where('asset_id', asset_id)
+					.del();
+
+				const delAsset = await trx('transfer_id')
+					.where('asset_id', asset_id)
+					.del();
+
+			})
+			
+			return 'Asset Deleted';
+		}
+		if (transferDetails.length) {
 			const lastTr = await getLastTransfer(transferDetails[0].asset_id);
-	
+
 			// If last transaction was after transaction being deleted, throw error
 			const lastTrDate = new Date(lastTr.transfer_date);
 			const delTrDate = new Date(transferDetails[0].transfer_date);
-	
+
 			if(delTrDate.getTime() < lastTrDate.getTime()) {
 				throw new Error('Error: Transfer date before last transaction');
 			} 
-	
-			const delTr = db('asset_transfer')
+
+			const delTr = await db('asset_transfer')
 				.where('transfer_id', transfer_id)
 				.del();
-	
+
 			return delTr;
 		}	
 		throw new Error('Transfer not found');
+	} catch(err) {
+		console.log(err);
+		throw(err);
+	}
+
 }
 
 async function test() {

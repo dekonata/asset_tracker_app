@@ -25,7 +25,7 @@ async function httpDeleteTransfer(req, res) {
 		const delTr = await deleteTransfer(transfer_id);
 		return res.status(200).json(delTr);
 	} catch (err) {
-		return res.status(400).json(err.message)
+		return res.status(400).json(err)
 	}
 }
 

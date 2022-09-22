@@ -3,10 +3,12 @@ import { emptySplitApi } from './emptySplitApi';
 const assetsApi = emptySplitApi.injectEndpoints({
 	endpoints: builder => ({
 		getAssets: builder.query({
-			query: () => '/assets/all'
+			query: () => '/assets/all',
+			providesTags: ['Assets']
 		}),
 		getTypeAssets: builder.query({
-			query: (asset_type) => `/assets/alltype/${asset_type}`
+			query: (asset_type) => `/assets/alltype/${asset_type}`,
+			providesTags: ['Assets']
 		}),
 		getAssetLists: builder.query({
 			query: () => '/assets/assetlists',
