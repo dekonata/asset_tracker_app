@@ -1,7 +1,39 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { DateFormatter } from '../../utils/utils';
 
-const AccessoryMovementTable = ({ movements, deleteMovement }) => {
+import {useDeleteAssetTransferMutation } from '../../api/apiTransfersSlice';
+import { setAccessory } from '../AccessoryCard/accessoryCardSlice';
+
+const AccessoryMovementTable = ({ movements, refetch }) => {
+	const [ deleteTransfer ] = useDeleteAssetTransferMutation();
+
+	const dispatch = useDispatch()
+
+	const deleteMovement = async (transfer_id) => {
+		try {
+			if(movements.length === 1) {
+				if(confirm('Deleting last transer will delete asset. Are you sure you want to proceed')) {
+					await deleteTransfer(transfer_id);
+					dispatch(setAccessory(''));
+					return;
+				} else {
+					return;
+				}
+				
+			} 
+			if(confirm("Are you sure you want to delete the transfer")) {
+				await deleteTransfer(transfer_id);
+				refetch();
+				return;
+			}
+			
+		} catch(err) {
+			console.log(err);
+			alert('Delete transfer failed')
+		}
+	};
+
 	return(
 		<div className="pa2">
 			<h3 className="bb">Transfers</h3>
@@ -28,7 +60,7 @@ const AccessoryMovementTable = ({ movements, deleteMovement }) => {
 									<td className="pa1">{parsedCaptureDate}</td>
 									<td 
 										className="fw6 bold link dim  pointer pr2"
-										onClick={() => deleteMovement()}
+										onClick={() => deleteMovement(transfer.transfer_id)}
 									>x</td>
 								</tr>
 							)

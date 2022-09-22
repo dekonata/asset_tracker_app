@@ -23,7 +23,7 @@ const AssetMovementTable = ({ serialnumber }) => {
 			dispatch(setViewEditPage('Location'))
 			dispatch(setLocationId((transfer.location.substr(0,5))))
 		}
-	}
+	};
 
 
 	const deleteMovement = async (transfer_id) => {
@@ -32,6 +32,8 @@ const AssetMovementTable = ({ serialnumber }) => {
 				if(confirm('Deleting last transer will delete asset. Are you sure you want to proceed')) {
 					await deleteTransfer(transfer_id);
 					dispatch(setAsset(''));
+					return;
+				} else {
 					return;
 				}
 				

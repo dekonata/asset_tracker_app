@@ -103,6 +103,7 @@ const AccessoriesCard = () => {
 						</button>
 					}
 					<AccessoryMovementTable
+						refetch = {refetch}
 						accessory_id = {accessory?.accessory_id}
 						movements = {accessory?.transfers}
 						deleteMovement={deleteMovement}

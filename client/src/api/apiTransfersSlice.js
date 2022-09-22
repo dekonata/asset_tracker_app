@@ -19,7 +19,7 @@ const transfersApi = emptySplitApi.injectEndpoints({
 				url: `/transfers/deltransfer/${transfer_id}`,
 				method: 'DELETE'
 			}),
-			invalidatesTags: ['Transfers', 'Asset', 'Assets', 'Accessory', 'Onestaff', 'Cabinets', 'Shelves']
+			invalidatesTags: ['Transfers', 'Asset', 'Assets', 'Accessories', 'Accessory', 'Onestaff', 'Cabinets', 'Shelves']
 		}),
 	})
 })
