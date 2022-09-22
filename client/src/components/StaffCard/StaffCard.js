@@ -46,7 +46,7 @@ const StaffCard = () => {
 		event.preventDefault();
 
 		const editData = {
-			staff_id: staffId,
+			location_type_id: staffId,
 			password: newPassword
 		};
 
