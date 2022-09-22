@@ -161,6 +161,7 @@ const AddNewAsset = () => {
 				setImei('');
 				setDescription('');
 				setAddAccessoryCount(0);
+				setAccPostData([]);
 			}
 		} catch(err) {
 			if(Number(err.data.code) === Number(23502)) {

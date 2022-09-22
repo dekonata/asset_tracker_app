@@ -57,16 +57,19 @@ async function getLocationAssetsReportStream() {
 			db.select(
 				db.raw(`CONCAT(location_code, TO_CHAR(location_type_id, 'FM00')) AS "Location Code"`),	
 				'location_name as Location Name',
-				db.raw(`TRIM(CONCAT(all_locations.firstname, ' ', all_locations.lastname, all_locations.description)) AS "Location Description"`),
 				db.raw(`COALESCE(all_asset_locations.asset_id::text, 'No Assets') AS "Asset ID"`),
 				db.raw(`COALESCE(all_assets.asset_type, 'N/A') AS "Asset Type"`),
-				db.raw(`CONCAT(all_assets.make, ' ', all_assets.model) AS "Asset Detail"`),
+				'all_assets.make as Make',
+				'all_assets.model as Model',
+				'all_assets.description as Description',
+				'all_assets.serialnumber as Serialnumber',
 				db.raw(`COALESCE(all_asset_locations.transfer_date::text, 'N/A') as "Transfer Date"`)
 				)
 			.from('all_locations')
 			.leftJoin('all_asset_locations', 'all_asset_locations.location_id', 'all_locations.location_id')
 			.leftJoin('all_assets', 'all_assets.asset_id', 'all_asset_locations.asset_id')
-			.stream();
+			.whereNotNull('all_assets.serialnumber')
+			// .stream();
 
 		return stream;
 		} catch(err) {
@@ -99,7 +102,7 @@ async function test() {
 
 
 
-// test()
+test()
 
 module.exports = {
 	getAssetLocationsReportStream,

@@ -47,10 +47,12 @@ async function httpGetLocationAssetsReport(req, res) {
 		delimiter: ',',
 		columns: [
 			{key: 'Location Code'}, 
-			{key: 'Location'}, 
+			{key: 'Location Name'},
 			{key: 'Asset ID'}, 
-			{key: 'Asset Type'}, 
-			{key: 'Asset Detail'},
+			{key: 'Asset Type'},
+			{key: 'Make'},
+			{key: 'Model'},
+			{key: 'Description'},
 			{key: 'Transfer Date'},
 		],
 		header: true
