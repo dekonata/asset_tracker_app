@@ -69,7 +69,7 @@ async function getLocationAssetsReportStream() {
 			.leftJoin('all_asset_locations', 'all_asset_locations.location_id', 'all_locations.location_id')
 			.leftJoin('all_assets', 'all_assets.asset_id', 'all_asset_locations.asset_id')
 			.whereNotNull('all_assets.serialnumber')
-			// .stream();
+			.stream();
 
 		return stream;
 		} catch(err) {
@@ -102,7 +102,7 @@ async function test() {
 
 
 
-test()
+// test()
 
 module.exports = {
 	getAssetLocationsReportStream,

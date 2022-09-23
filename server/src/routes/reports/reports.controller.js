@@ -49,6 +49,7 @@ async function httpGetLocationAssetsReport(req, res) {
 			{key: 'Location Code'}, 
 			{key: 'Location Name'},
 			{key: 'Asset ID'}, 
+			{key: 'Serialnumber'},
 			{key: 'Asset Type'},
 			{key: 'Make'},
 			{key: 'Model'},
