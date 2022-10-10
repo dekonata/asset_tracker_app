@@ -13,7 +13,7 @@ const Navibar = () => {
 
 		dispatch(setRoute('login'))
 		try {
-			const url = process.env.REACT_APP_LOGIN_URL
+			const url = process.env.REACT_APP_LOGOUT_URL
 			const options = {
 				method: 'POST',
 				credentials: 'include'
