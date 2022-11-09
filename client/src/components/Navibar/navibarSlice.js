@@ -2,7 +2,7 @@ import { createSlice } from  '@reduxjs/toolkit'
 
 // State value is string indicating which view to be displayed
 const initialState = {
-	value: ''
+	value: 'login'
 }
 
 export const slice = createSlice({
