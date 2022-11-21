@@ -58,14 +58,26 @@ const TEST_NOTE = {
 	note: "Damaged by Brad while he was travelling because he was drunk"
 }
 
-async function getAllAssets() {
-	return await db.select('*').from('all_assets');
+const TEST_ASSET_TYPE = {
+	name: "ztype",
+	fields: ['pingpong']
 }
 
-const TEST_EDIT_NOTE = {
-	note_id: 3,
-	note: "Damaged by Brad while he was travelling because he was drunk-ish"
+async function addAssetType(data) {
+	const { name, fields } = data;
+	return db.schema.createTable(name, (table) => {
+		table.increments(`${name}_id`).unique().primary()
+		table.integer('asset_id')
+			.references('transfer_id.asset_id')
+			.onDelete('CASCADE')
+			.onUpdate('CASCADE')
+		table.string('name')
+		// table.foreign('asset_id').references('transfer_id.asset_id')
+	})
+}
 
+async function getAllAssets() {
+	return await db.select('*').from('all_assets');
 }
 
 async function getAllTypeAssets(asset_type) {
@@ -110,6 +122,30 @@ async function getOneAsset(serial_number) {
 		throw err
 	}
 }
+
+// Get all assets by dynamically without using a view
+async function getAllAssets2() {
+	// Get all asset types which correspond to table names
+	const assetTypes = await db('transfer_id')
+		.pluck('asset_type')
+		.distinctOn('asset_type')
+
+	const query =  db.select(
+		'transfer_id.asset_id',
+		'transfer_id.asset_type'
+		)
+		.from('transfer_id')
+		// .rightJoin('accessory', 'accessory.asset_id', 'transfer_id.asset_id')
+
+	// Join all asset types tables to the query
+	assetTypes.forEach(type => {
+				query.select(`${type}.serialnumber`)
+					.leftJoin(type, `${type}.asset_id`, 'transfer_id.asset_id')
+			})
+
+	return query;
+}
+
 // Get lists for each field to be used in frontend suggestbox
 async function getAssetTypeSuggestList(asset_type) {
 	const serialList = 
@@ -291,13 +327,13 @@ async function delAssetNote(note_id) {
 
 async function test() {
 	try {
-		const insert = await getOneAsset('F80DF');
+		const insert = await addAssetType(TEST_ASSET_TYPE);
 		console.log(insert)
 	} catch(err) {
 		console.log(err)
 	}
 }
-// test();
+test();
 
 
 module.exports = {

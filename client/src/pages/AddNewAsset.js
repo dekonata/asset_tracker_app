@@ -12,7 +12,9 @@ import {
 } from '../api/apiAssetSlice';
 import { useGetAllLocationsQuery } from '../api/apiLocationsSlice';
 
-
+const addState = (stateName) => {
+	return [stateName, `set${stateName}`]
+}
 
 const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc']
 
@@ -28,6 +30,7 @@ const AddNewAsset = () => {
 	const [addAccessoryCount, setAddAccessoryCount] = useState(0)
 	const [accPostData, setAccPostData] = useState([])
 	const [locationCode, setLocationCode] = useState([])
+
 
 	const {data: assetlists, isSuccess} = useGetAssetListsQuery();
 	const {data: locations, isSuccess: gotLocations} = useGetAllLocationsQuery();

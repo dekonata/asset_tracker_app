@@ -1,7 +1,10 @@
 /* eslint-disable indent */
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
-import { useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
+
+import { useSelector, useDispatch} from 'react-redux';
+import { setRoute } from '../components/Navibar/navibarSlice';
 
 import Login from '../containers/Login/Login'
 import Navibar from '../components/Navibar/Navibar';
@@ -12,6 +15,21 @@ import Reports from '../pages/Reports';
 
 function App() {
 	const route = useSelector(state => state.route.value)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(Cookies.get('session')) {
+      dispatch(setRoute('add'))
+    } else {
+      dispatch(setRoute('login'))
+    }
+
+		// if(Cookies.get('session')) {
+		// 	dispatch(setRoute('add'))
+		// } else {
+		// 	dispatchEvent(setRoute('login'))
+		// }
+	}, [])
 
 	const returnRoute = () => {
 		switch(route) {

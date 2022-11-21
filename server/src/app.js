@@ -27,6 +27,7 @@ app.use(
         name: 'session',
         secret: process.env.COOKIE_SECRET, 
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        httpOnly: false,
     })
 );
 app.use(express.json());
