@@ -1,22 +1,19 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import SuggestBox from '../components/SuggestBox/SuggestBox';
 import TextInput from '../components/TextInput/TextInput';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import AddAssetAccessory from '../components/AddAssetAccessory/AddAssetAccessory.js'
+import AddAssetAccessory from '../components/AddAssetAccessory/AddAssetAccessory.js';
 import { 
 	useAddMultipleAssetsMutation,
 	useGetAssetListsQuery,
-
 } from '../api/apiAssetSlice';
 import { useGetAllLocationsQuery } from '../api/apiLocationsSlice';
 
-const addState = (stateName) => {
-	return [stateName, `set${stateName}`]
-}
+const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc'];
 
-const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc']
+const ASSET_FIELDS = [{name: 'TEST1', type: 'suggest', new: false}, {name: 'TEST2', type: 'text'}];
 
 const AddNewAsset = () => {
 	const [transfer_date, setTransferDate] = useState(new Date());
@@ -26,15 +23,41 @@ const AddNewAsset = () => {
 	const [asset_condition, setCondition] = useState('');
 	const [serialnumber, setSerialNumber] = useState('');
 	const [imei, setImei] = useState('');
-	const [description, setDescription] = useState('')
-	const [addAccessoryCount, setAddAccessoryCount] = useState(0)
-	const [accPostData, setAccPostData] = useState([])
-	const [locationCode, setLocationCode] = useState([])
+	const [description, setDescription] = useState('');
+	const [addAccessoryCount, setAddAccessoryCount] = useState(0);
+	const [accPostData, setAccPostData] = useState([]);
+	const [locationCode, setLocationCode] = useState([]);
+	const [customFieldData, setCustomFieldData] = useState({});
 
 
 	const {data: assetlists, isSuccess} = useGetAssetListsQuery();
 	const {data: locations, isSuccess: gotLocations} = useGetAllLocationsQuery();
 	const [addAssets] = useAddMultipleAssetsMutation();
+
+	const showCustomFields = () => {
+		const customFields = ASSET_FIELDS.map((field, i) => {
+			if(field.type === 'suggest') {
+				return (<SuggestBox 
+					key={i}
+					label={field.name + ':'}
+					initial_input={''} 
+					suggestlist={customFieldData[field.name]}
+					addNewEnabled={field.new} 
+					handleInputChange={input_value => setCustomFieldData({...customFieldData, [field.name]: input_value})}
+				/>)
+			} else if (field.type === 'text') {
+				return (<TextInput
+					key={i}
+					label={field.name + ':'}
+					value={customFieldData[field.name]}
+					handleInputChange={event => setCustomFieldData({...customFieldData, [field.name]: event.target.value})}
+				/>
+				)
+			}
+		});
+
+		return customFields;
+	}
 
 	// Increase the count of the number of "Add Accessory" elements
 	const addAccessory = (event) => {
@@ -178,6 +201,7 @@ const AddNewAsset = () => {
 
 	return (
 		<div className="pt2">
+			{console.log(customFieldData)}
 			{!isSuccess || !gotLocations
 				? 
 				<h1> LOADING </h1>
@@ -237,7 +261,8 @@ const AddNewAsset = () => {
 							suggestlist={locations?.selectList} 
 							addNewEnabled={false} 
 							handleInputChange={input_value => setLocationCode(input_value)}
-						/>	
+						/>
+						{showCustomFields()}	
 						{(asset_type.toLowerCase() === 'cellphone' || asset_type.toLowerCase() === 'modem') &&
 							<TextInput
 								label="IMEI"

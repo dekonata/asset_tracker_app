@@ -6,13 +6,14 @@ import AddNewAccessory from '../pages/AddNewAccessory';
 import AddNewCabinet from '../pages/AddNewCabinet';
 import AddNewShelf from '../pages/AddNewShelf'
 import AddNewLocation from '../pages/AddNewLocation'
+import AddNewAssetType from '../pages/AddNewAssetType'
 
 import SuggestBox from '../components/SuggestBox/SuggestBox';
 
 
 const Add = () => {
 	const [addValue, setAddValue] = useState('');
-	const [addList] = useState(['Asset', 'Cabinet', 'Shelf' ,'Staff', 'Accessory', 'Location']);
+	const [addList] = useState(['Asset', 'Cabinet', 'Shelf' ,'Staff', 'Accessory', 'Location', 'Asset Type']);
 
 	const onAddSelect = (input_value) => {
 		setAddValue(input_value);
@@ -33,6 +34,8 @@ const Add = () => {
 			return <AddNewAccessory/>
 		case "Location":
 			return <AddNewLocation/>
+		case "Asset Type":
+			return <AddNewAssetType/>
 		default:
 			return <div></div>
 		}
