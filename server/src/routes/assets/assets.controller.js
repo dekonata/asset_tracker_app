@@ -1,4 +1,5 @@
 const { 
+	getAssetFields,
 	getAllAssets,
 	getAllTypeAssets,
 	getOneAsset,
@@ -11,6 +12,17 @@ const {
 	getAssetNotes,
 	delAssetNote,
 	 } = require('../../models/assets.model.js');
+
+// get object with names and info of all asset fields
+async function httpGetAssetFields(req,res) {
+	try {
+		const query = await getAssetFields();
+		return res.status(200).json(query);
+	} catch {
+		console.log(err);
+		return res.status(400).json(err);
+	}
+}
 
 async function httpGetAllAssets(req, res) {
 	console.log(req.session)
@@ -112,6 +124,7 @@ async function httpDelAssetNote(req, res) {
 
 
 module.exports = {
+	httpGetAssetFields,
 	httpGetAllAssets,
 	httpGetAllTypeAssets,
 	httpGetOneAsset,

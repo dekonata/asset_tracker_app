@@ -2,6 +2,10 @@ import { emptySplitApi } from './emptySplitApi';
 
 const assetsApi = emptySplitApi.injectEndpoints({
 	endpoints: builder => ({
+		getAssetFields: builder.query({
+			query: () => '/assets/fields',
+			providesTags: ['Assetfields']
+		}),
 		getAssets: builder.query({
 			query: () => '/assets/all',
 			providesTags: ['Assets']
@@ -73,6 +77,7 @@ const assetsApi = emptySplitApi.injectEndpoints({
 });
 
 export const { 
+	useGetAssetFieldsQuery,
 	useGetAssetsQuery, 
 	useGetTypeAssetsQuery,
 	useGetAssetListsQuery,

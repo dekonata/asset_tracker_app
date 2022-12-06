@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { 
+	httpGetAssetFields,
 	httpGetAllAssets, 
 	httpGetAllTypeAssets,
 	httpGetOneAsset,
@@ -16,6 +17,7 @@ const {
 
 const assetsRouter = express.Router();
 
+assetsRouter.get('/fields', httpGetAssetFields);
 assetsRouter.get('/all', httpGetAllAssets);
 assetsRouter.get('/alltype/:asset_type', httpGetAllTypeAssets);
 assetsRouter.get('/asset/:serialnumber', httpGetOneAsset);

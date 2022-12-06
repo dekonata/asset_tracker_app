@@ -24,6 +24,8 @@ export const emptySplitApi = createApi({
 	baseQuery: baseQueryWithAuth,
 	tagTypes: [
 		'Assets', 
+		'Assetfields',
+		'Assettypes',
 		'Asset', 
 		'Accessories',
 		'Accessory',

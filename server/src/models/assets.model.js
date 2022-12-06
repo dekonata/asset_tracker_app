@@ -58,26 +58,51 @@ const TEST_NOTE = {
 	note: "Damaged by Brad while he was travelling because he was drunk"
 }
 
-const TEST_ASSET_TYPE = {
-	name: "ztype",
-	fields: ['pingpong']
+async function getAssetFields() {
+	const fieldsQuery = await db('asset_field')
+					.select('*');
+	
+	// Create object with field name as keys, and field data object as values
+	fieldsHash = fieldsQuery.reduce((obj, field) => {
+		const {field_id, input_type, data_type} = field;
+		// return the object after modifying it using comma operator
+		return (obj[field.field_name] = {field_id, input_type, data_type}, obj)}
+		, {})
+
+	return fieldsHash;					
 }
 
-async function addAssetType(data) {
-	const { name, fields } = data;
-	return db.schema.createTable(name, (table) => {
-		table.increments(`${name}_id`).unique().primary()
-		table.integer('asset_id')
-			.references('transfer_id.asset_id')
-			.onDelete('CASCADE')
-			.onUpdate('CASCADE')
-		table.string('name')
-		// table.foreign('asset_id').references('transfer_id.asset_id')
-	})
+async function getAllAssetTypes() {
+	const query = await db('asset_type')
+							.pluck('type_name');
+	return query;
 }
 
 async function getAllAssets() {
 	return await db.select('*').from('all_assets');
+}
+
+// Get all assets by dynamically without using a view
+async function getAllAssets2() {
+	// Get all asset types which correspond to table names
+	const assetTypes = await db('transfer_id')
+		.pluck('asset_type')
+		.distinctOn('asset_type')
+
+	const query =  db.select(
+		'transfer_id.asset_id',
+		'transfer_id.asset_type'
+		)
+		.from('transfer_id')
+		// .rightJoin('accessory', 'accessory.asset_id', 'transfer_id.asset_id')
+
+	// Join all asset types tables to the query
+	assetTypes.forEach(type => {
+				query.select(`${type}.serialnumber`)
+					.leftJoin(type, `${type}.asset_id`, 'transfer_id.asset_id')
+			})
+
+	return query;
 }
 
 async function getAllTypeAssets(asset_type) {
@@ -123,28 +148,7 @@ async function getOneAsset(serial_number) {
 	}
 }
 
-// Get all assets by dynamically without using a view
-async function getAllAssets2() {
-	// Get all asset types which correspond to table names
-	const assetTypes = await db('transfer_id')
-		.pluck('asset_type')
-		.distinctOn('asset_type')
 
-	const query =  db.select(
-		'transfer_id.asset_id',
-		'transfer_id.asset_type'
-		)
-		.from('transfer_id')
-		// .rightJoin('accessory', 'accessory.asset_id', 'transfer_id.asset_id')
-
-	// Join all asset types tables to the query
-	assetTypes.forEach(type => {
-				query.select(`${type}.serialnumber`)
-					.leftJoin(type, `${type}.asset_id`, 'transfer_id.asset_id')
-			})
-
-	return query;
-}
 
 // Get lists for each field to be used in frontend suggestbox
 async function getAssetTypeSuggestList(asset_type) {
@@ -327,16 +331,17 @@ async function delAssetNote(note_id) {
 
 async function test() {
 	try {
-		const insert = await addAssetType(TEST_ASSET_TYPE);
+		const insert = await getAllAssetTypes();
 		console.log(insert)
 	} catch(err) {
 		console.log(err)
 	}
 }
-test();
+// test();
 
 
 module.exports = {
+	getAssetFields,
 	getAllAssets,
 	getAllTypeAssets,
 	getOneAsset,
