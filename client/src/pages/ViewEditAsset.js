@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import SuggestBox from '../components/SuggestBox/SuggestBox';
+import AssetFields from '../components/AssetFields/AssetFields';
 import AssetCard from '../components/AssetCard/AssetCard';
 import AssetMovementTable from '../components/AssetMovementTable/AssetMovementTable';
 import AssetTypeList from '../components/AssetTypeList/AssetTypeList'
 import TextInput from '../components/TextInput/TextInput';
+import SuggestBox from '../components/SuggestBox/SuggestBox';
 
-import { setAsset } from '../components/AssetCard/assetCardSlice'
-import { useGetAssetListsQuery}  from '../api/apiAssetSlice';
-
-const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc']
+import { setAsset } from '../components/AssetCard/assetCardSlice';
+import { useGetAllAssettypesQuery } from '../api/apiAssettypesSlice'
+import { useGetTypeListsQuery}  from '../api/apiAssettypesSlice';
 
 const ViewEditAsset = () => {
 	const [assetType, setAssetType] = useState('');
+	const [fieldInputData, setFieldInputData] = useState({});
 	const [serialList, setSerialList] = useState([]);
 	const [modelFilter, setModelFilter] = useState('');
 	const [locationFilter, setLocationFilter] = useState('');
@@ -24,7 +25,8 @@ const ViewEditAsset = () => {
 	// Increase update state +1 to rerun fetch and update values
 	const [update, setUpdate] = useState(0);
 
-	const {data: assetlists, isSuccess} = useGetAssetListsQuery();
+	const {data: assetlists, isSuccess} = useGetTypeListsQuery();
+	const {data: typeList} = useGetAllAssettypesQuery();
 
 	useEffect(() => {
 		// set serial list based on asset type selected
@@ -45,24 +47,22 @@ const ViewEditAsset = () => {
 		return
 	}
 
+	const handleFieldInput = (input_value) => {
+		setFieldInputData({...fieldInputData, ...input_value})
+	}
+
+	// const returnFilterFields = () => {
+		
+	// }
+
 	return (
 		<div>
 			<form className="">
+			{console.log(fieldInputData)}
 				<SuggestBox 
 					label="Asset Type:"
-					suggestlist={ASSET_TYPES}
+					suggestlist={typeList}
 					handleInputChange={input_value => selectAssetType(input_value)}
-				/>
-				<SuggestBox 
-					label="Search Serials:"
-					suggestlist={serialList}
-					initial_input={serial}
-					handleInputChange={input_value => dispatch(setAsset((input_value)))}
-				/>						
-				<TextInput
-					label="Filter Models:"
-					value={modelFilter}
-					handleInputChange={event => setModelFilter(event.target.value)}
 				/>
 				<TextInput
 					label="Filter Locations:"
@@ -70,6 +70,13 @@ const ViewEditAsset = () => {
 					handleInputChange={event => setLocationFilter(event.target.value)}
 				/>
 			</form>
+			{assetType && 
+				<AssetFields
+					assettype={assetType}
+					fieldInputData={fieldInputData}
+					handleFieldInput={input_value => handleFieldInput(input_value)}
+				/>
+			}
 			{assetType && !serial && 
 				<AssetTypeList
 					asset_type={assetType.toLowerCase()}

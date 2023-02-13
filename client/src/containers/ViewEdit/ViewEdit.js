@@ -5,14 +5,14 @@ import SuggestBox from '../../components/SuggestBox/SuggestBox';
 import ViewEditAsset from '../../pages/ViewEditAsset';
 import ViewEditStorage from '../../pages/ViewEditLocation';
 import ViewEditStaff from '../../pages/ViewEditStaff';
-import ViewAllAccessories from '../../pages/ViewAllAccessories'
+import ViewAllAccessories from '../../pages/ViewAllAccessories';
+import ViewEditAssetType from '../../pages/ViewEditAssetType';
 
 import { setViewEditPage, selectViewEditPage } from './viewEditSlice';
 
-
 const ViewEdit= () => {
 	const viewEditValue = useSelector(selectViewEditPage);
-	const [addList] = useState(['Asset', 'Location', 'Staff', 'Accessories']);
+	const [addList] = useState(['Asset', 'Location', 'Staff', 'Accessories', 'Asset Type']);
 
 	const dispatch = useDispatch()
 	const onViewEditSelect = (input_value) => {
@@ -40,7 +40,12 @@ const ViewEdit= () => {
 			return (
 				<ViewAllAccessories
 				/>
-			);				
+			);
+		case "Asset Type":
+			return (
+				<ViewEditAssetType
+				/>
+			)				
 		default:
 			return <div></div>;
 		}

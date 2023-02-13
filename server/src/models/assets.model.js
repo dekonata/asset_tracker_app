@@ -7,15 +7,13 @@ const {queryParsedLocations} = require('../services/utils.js');
 const DEFAULT_LOCATION_ID = '1';
 
 const TEST_ASSET = {    
-	asset_type: 'accessory',                                                                                                                                                   
+	asset_type: 'printers',                                                                                                                                                   
 	asset: {
-			make: 'Microsoft', 
-			accessory_type: 'Mouse',
-			description: 'Bluetooth Mouse',
-			location_id: 72
+			model: 'P50', 
+			type: 'laser'
 		},       
 	location_id: 72,
-  	transfer_date: '2022-02-25'                                                                                                                                   
+  	transfer_date: '2023-01-25'                                                                                                                                   
 }   
 
 const TEST_ASSET_LIST = [
@@ -64,9 +62,9 @@ async function getAssetFields() {
 	
 	// Create object with field name as keys, and field data object as values
 	fieldsHash = fieldsQuery.reduce((obj, field) => {
-		const {field_id, input_type, data_type} = field;
+		const {field_id, input_type, data_type, is_unique} = field;
 		// return the object after modifying it using comma operator
-		return (obj[field.field_name] = {field_id, input_type, data_type}, obj)}
+		return (obj[field.column_name] = {field_id, input_type, data_type, is_unique}, obj)}
 		, {})
 
 	return fieldsHash;					
@@ -82,7 +80,7 @@ async function getAllAssets() {
 	return await db.select('*').from('all_assets');
 }
 
-// Get all assets by dynamically without using a view
+// Get all assets dynamically without using a view
 async function getAllAssets2() {
 	// Get all asset types which correspond to table names
 	const assetTypes = await db('transfer_id')
@@ -105,6 +103,7 @@ async function getAllAssets2() {
 	return query;
 }
 
+// Function moved to assettypes model - REMOVE WHEN SAFE
 async function getAllTypeAssets(asset_type) {
 	try {
 		return await 
@@ -207,6 +206,8 @@ async function getAssetSuggestLists() {
 async function addAsset(asset_data) {
 	console.log(asset_data);
 	const {asset_type, asset, location_id, transfer_date} = asset_data;
+	// Convert assettype from Display Name to table name format
+	const formattedName = assettype.toLowerCase().replaceAll(' ', '_');
 	try {
 		return await db.transaction(async trx => {
 			// Generate trasnfer_id for asset
@@ -218,7 +219,7 @@ async function addAsset(asset_data) {
 			const insertData = Object.assign({}, asset, addTransferAsset[0]); 
 
 			const insertAsset =
-				await trx(asset_type)
+				await trx(formattedName)
 					.insert( insertData, 'asset_id');
 
 			// Transfer new item to default location in transfer table
@@ -238,20 +239,25 @@ async function addAsset(asset_data) {
 }
 
 async function addMultipleAssets(asset_list) {
+	
 	try {
 		return await db.transaction(async trx => {
 			for(asset_data of asset_list) {
 				const {asset_type, asset, transfer_date, location_id} = asset_data;
+
+				// Convert assettype from Display Name to table name format
+				const formattedName = asset_type.toLowerCase().replaceAll(' ', '_');
+
 				// Generate trasnfer_id for asset	
 				const addTransferAsset = 
 					await trx('transfer_id')
-						.insert({asset_type: asset_type}, 'asset_id');
+						.insert({asset_type: formattedName}, 'asset_id');
 
 				// Add new Asset Transfer ID to asset data for inserting in asset table
 				const insertData = Object.assign({}, asset, addTransferAsset[0]); 
 
 				const insertAsset =
-					await trx(asset_type)
+					await trx(formattedName)
 						.insert( insertData, 'asset_id');
 
 				// Transfer new item to default location in transfer table				
@@ -267,6 +273,7 @@ async function addMultipleAssets(asset_list) {
 			return "Insert Complete";
 		})
 	} catch(err) {
+		console.log(err)
 		throw err;
 	}
 }
@@ -331,13 +338,13 @@ async function delAssetNote(note_id) {
 
 async function test() {
 	try {
-		const insert = await getAllAssetTypes();
+		const insert = await getAssetFields();
 		console.log(insert)
 	} catch(err) {
 		console.log(err)
 	}
 }
-// test();
+test();
 
 
 module.exports = {

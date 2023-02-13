@@ -1,6 +1,6 @@
 import React from "react";
 
-const TextInput = ({label, handleInputChange, value, type="text", autoComplete}) => {
+const TextInput = ({label, handleInputChange, value, type="text", autoComplete, max_length}) => {
 	return (
 		<div className="pv1 flex items-center">
 			<label className="dib w4 pr5 mv2"> {label} </label>
@@ -12,6 +12,7 @@ const TextInput = ({label, handleInputChange, value, type="text", autoComplete})
 					type={type} 
 					required 
 					autoComplete={autoComplete}
+					maxLength={max_length}
 					onChange={handleInputChange}/> 
 			</div>
 		</div>

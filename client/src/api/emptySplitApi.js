@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import { setRoute } from '../components/Navibar/navibarSlice'
 
+// eslint-disable-next-line no-undef
 const API_URL = process.env.REACT_APP_API_URL;
 
 
@@ -39,6 +40,10 @@ export const emptySplitApi = createApi({
 		'Transfers', 
 		'User',
 		'Assetnotes',
+		'Typefields',
+		'TypeAssets',
+		'TypeLists',
+		
 	],
 	endpoints: () => ({}),
 })

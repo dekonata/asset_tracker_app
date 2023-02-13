@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { setAsset } from '../AssetCard/assetCardSlice'
 
-import { useGetTypeAssetsQuery } from '../../api/apiAssetSlice';
+// import { useGetTypeAssetsQuery } from '../../api/apiAssetSlice';
+import { useGetTypeAssetsQuery } from '../../api/apiAssettypesSlice';
 
 const AssetTypeList = ({asset_type, model_filter='', location_filter=''}) => {
 	const dispatch = useDispatch();

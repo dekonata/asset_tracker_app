@@ -10,6 +10,13 @@ import {
 	useAddAssetTypeMutation,
 } from '../api/apiAssettypesSlice';
 
+const DEFAULT_FIELDS = [
+	{name: 'serialnumber', data_type: 'Mixed Length Text', input_type: 'Text', is_unique: true},
+	{name: 'make', data_type: 'Mixed Length Text', input_type: 'Suggest', is_unique: false},
+	{name: 'model', data_type: 'Mixed Length Text', input_type: 'Suggest', is_unique: false},
+	{name: 'asset_condition', data_type: 'Mixed Length Text', input_type: 'Suggest', is_unique: false}		
+]
+
 const AddNewAssetType = () => {
 	const [assetTypeName, setAssetTypeName] = useState('');
 	const [typeCode, setTypeCode] = useState('');
@@ -19,7 +26,8 @@ const AddNewAssetType = () => {
 	const [newFieldName, setNewFieldName] = useState('');
 	const [newFieldData, setNewFieldData] = useState('');
 	const [newFieldInput, setNewFieldInput] = useState('');
-	const [fields, setFields] = useState([]);
+	const [isFieldUnique, setIsFieldUnique] = useState('');
+	const [fields, setFields] = useState(DEFAULT_FIELDS);
 
 	const {data:existingfields, isSuccess} = useGetAssetFieldsQuery();
 	const [addType] = useAddAssetTypeMutation();
@@ -34,21 +42,28 @@ const AddNewAssetType = () => {
 
 	const addField = (event) => {
 		event.preventDefault();
-		console.log(existingfields[existFieldName])
 		if(fields.some(field => field.name === newFieldName || field.name === existFieldName)) {
 			alert('Cannot add duplicate fields');
 			return;
 		}
 		// Check if field already exists in database
 		if(existingfields[existFieldName]) {
-			console.log('exist')
 			setFields([...fields, {
 				name: existFieldName, 
 				data_type: existingfields[existFieldName]?.data_type, 
-				input_type: existingfields[existFieldName]?.input_type 
+				input_type: existingfields[existFieldName]?.input_type,
+				is_unique: existingfields[existFieldName]?.is_unique
 			}]);		
 		} else {
-			setFields([...fields, {name: newFieldName, data_type: newFieldData, input_type: newFieldInput }]);
+			setFields([
+				...fields, 
+				{
+					name: newFieldName, 
+					data_type: newFieldData, 
+					input_type: newFieldInput,
+					is_unique:  isFieldUnique === 'YES' ? true : false,
+				}
+			]);
 		}
 		setExistFieldName('');
 		setNewFieldName('');
@@ -58,7 +73,15 @@ const AddNewAssetType = () => {
 	}
 
 	const deleteField = (fieldDelete) => {
-		const updatedFields = fields.filter(field => field.name !== fieldDelete);
+		const default_field_names = DEFAULT_FIELDS.map(fieldObj => fieldObj.name);
+		if(default_field_names.includes(fieldDelete)) {
+			alert('Cannot delete default field');
+			return fieldDelete;
+		}
+		const updatedFields = fields.filter(field => {
+
+			return field.name !== fieldDelete
+		});
 
 		setFields(updatedFields);
 		return
@@ -87,7 +110,6 @@ const AddNewAssetType = () => {
 					return;
 				}
 				alert("Could not add asset. Contact system administrator")
-				console.log(postData)
 				return;
 			}
 
@@ -118,6 +140,7 @@ const AddNewAssetType = () => {
 						<TextInput
 							label="Asset Type Code:"
 							value={typeCode}
+							max_length={3}
 							handleInputChange={event => inputTypeCode(event.target.value)}
 						/>
 					</form>
@@ -133,6 +156,7 @@ const AddNewAssetType = () => {
 										<th className="fw6 tl pa2 bg-white">Name</th>
 										<th className="fw6 tl pa2 bg-white">Data Type</th>
 										<th className="fw6 tl pa2 bg-white">Input Type</th>
+										<th className="fw6 tl pa2 bg-white">Is Unique</th>
 									</tr>
 								</thead>
 								<tbody className="lh-copy">		
@@ -144,6 +168,7 @@ const AddNewAssetType = () => {
 												<td className="pa1">{field.name}</td>
 												<td className="pa1">{field.data_type}</td>
 												<td className="pa1">{field.input_type}</td>
+												<td className="pa1">{field.is_unique ? "YES" : "NO"}</td>
 												<td 
 													className="fw6 bold link dim  pointer pr2"
 													onClick={() => deleteField(field.name)}
@@ -172,9 +197,15 @@ const AddNewAssetType = () => {
 								</div>
 							</div>
 							<div className="pv3 h1 flex items-center">
-								<label className="dib w4 pr5 mv1"> Data Type: </label>
+								<label className="dib w4 pr5 mv1"> Inpute Type: </label>
 								<div className="dib">
 									<p>{existingfields[existFieldName]?.input_type}</p> 
+								</div>
+							</div>
+							<div className="pv3 h1 flex items-center">
+								<label className="dib w4 pr5 mv1"> Is Unique </label>
+								<div className="dib">
+									<p>{(existingfields[existFieldName]?.is_unique) ? 'Yes' : 'No'}</p> 
 								</div>
 							</div>
 							<input className="b"
@@ -208,6 +239,13 @@ const AddNewAssetType = () => {
 								suggestlist={inputTypes} 
 								addNewEnabled={false}
 								handleInputChange={input_value => setNewFieldInput(input_value)}
+							/>
+							<SuggestBox 
+								label="Is Field Data Unique:"
+								initial_input={isFieldUnique}
+								suggestlist={["YES", "NO"]} 
+								addNewEnabled={false}
+								handleInputChange={input_value => setIsFieldUnique(input_value)}
 							/>
 							{ newFieldName && newFieldData && newFieldInput && 
 								<input className="b"

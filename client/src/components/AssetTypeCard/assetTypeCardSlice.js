@@ -2,21 +2,21 @@ import { createSlice } from  '@reduxjs/toolkit'
 
 // State value is string indicating which view to be displayed
 const initialState = {
-	locationId: ''
+	typeId: ''
 }
 
 export const slice = createSlice({
-	name: 'locations',
+	name: 'assettype',
 	initialState,
 	reducers: {
-		setLocationId: (state, action) => {
-			state.locationId = action.payload;
+		setAssetType: (state, action) => {
+			state.typeId = action.payload;
 		},
 	},
 });
 
-export const { setLocationId } = slice.actions;
+export const { setAssetType } = slice.actions;
 
-export const selectLocationId = state => state.locations.locationId;
+export const selectAssetType = state => state.assettype.serial;
 
 export default slice.reducer;

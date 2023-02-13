@@ -48,10 +48,17 @@ const SuggestBox = ({initial_input, label, suggestlist, addNewEnabled, handleInp
 			if(inputEl.current.contains(event.target)) {
 				return;
 			} else {
-				if(!selected) {
-					setInputValue('');
+				if(
+					inputValue.length != 0 && !selected
+				) {
+					if(confirm('Nothing selected?' + label + inputValue)) {
+						setInputValue('');
+						setSuggestOpen(false);
+					}
+				} else {
+					setSuggestOpen(false)
 				}
-				setSuggestOpen(false);
+
 			}
 		}
 		document.body.addEventListener("click", onBodyClick)
@@ -59,7 +66,7 @@ const SuggestBox = ({initial_input, label, suggestlist, addNewEnabled, handleInp
 		return () => {
 			document.body.removeEventListener("click", onBodyClick);
 		}
-	}, [selected]);
+	}, [selected, inputValue]);
 
 	const toggleSuggest = () => {
 		if(suggestOpen) {
@@ -93,7 +100,6 @@ const SuggestBox = ({initial_input, label, suggestlist, addNewEnabled, handleInp
 		setSelected(true);
 		setInputValue(event.target.innerHTML);
 		handleInputChange(event.target.innerHTML);
-		// setFilteredList(suggestlist.slice(0,10));
 		setSuggestOpen(false);
 		setFocus(event.target.value);
 	}

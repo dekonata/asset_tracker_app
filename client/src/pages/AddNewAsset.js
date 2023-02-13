@@ -1,62 +1,35 @@
 import React, { useState } from 'react';
 import SuggestBox from '../components/SuggestBox/SuggestBox';
-import TextInput from '../components/TextInput/TextInput';
 import DatePicker from "react-datepicker";
+import AssetFields from '../components/AssetFields/AssetFields';
 import "react-datepicker/dist/react-datepicker.css";
 
 import AddAssetAccessory from '../components/AddAssetAccessory/AddAssetAccessory.js';
+
+import { 
+	useGetAllAssettypesQuery } from '../api/apiAssettypesSlice';
 import { 
 	useAddMultipleAssetsMutation,
 	useGetAssetListsQuery,
 } from '../api/apiAssetSlice';
 import { useGetAllLocationsQuery } from '../api/apiLocationsSlice';
 
-const ASSET_TYPES = ['Laptop', 'Monitor', 'Modem', 'Cellphone' , 'PC', 'Tablet', 'Misc'];
-
-const ASSET_FIELDS = [{name: 'TEST1', type: 'suggest', new: false}, {name: 'TEST2', type: 'text'}];
-
 const AddNewAsset = () => {
 	const [transfer_date, setTransferDate] = useState(new Date());
 	const [asset_type, setAssetType] = useState('');
-	const [make, setMake] = useState('');
-	const [model, setModel] = useState('');
-	const [asset_condition, setCondition] = useState('');
-	const [serialnumber, setSerialNumber] = useState('');
-	const [imei, setImei] = useState('');
-	const [description, setDescription] = useState('');
 	const [addAccessoryCount, setAddAccessoryCount] = useState(0);
 	const [accPostData, setAccPostData] = useState([]);
 	const [locationCode, setLocationCode] = useState([]);
-	const [customFieldData, setCustomFieldData] = useState({});
+	const [fieldInputData, setFieldInputData] = useState({})
 
-
+	const {data: assettypes, isSuccess: gotAssettypes} = useGetAllAssettypesQuery();
 	const {data: assetlists, isSuccess} = useGetAssetListsQuery();
 	const {data: locations, isSuccess: gotLocations} = useGetAllLocationsQuery();
 	const [addAssets] = useAddMultipleAssetsMutation();
 
-	const showCustomFields = () => {
-		const customFields = ASSET_FIELDS.map((field, i) => {
-			if(field.type === 'suggest') {
-				return (<SuggestBox 
-					key={i}
-					label={field.name + ':'}
-					initial_input={''} 
-					suggestlist={customFieldData[field.name]}
-					addNewEnabled={field.new} 
-					handleInputChange={input_value => setCustomFieldData({...customFieldData, [field.name]: input_value})}
-				/>)
-			} else if (field.type === 'text') {
-				return (<TextInput
-					key={i}
-					label={field.name + ':'}
-					value={customFieldData[field.name]}
-					handleInputChange={event => setCustomFieldData({...customFieldData, [field.name]: event.target.value})}
-				/>
-				)
-			}
-		});
+	const handleFieldInput = (input_value) => {
+		setFieldInputData({...fieldInputData, ...input_value})
 
-		return customFields;
 	}
 
 	// Increase the count of the number of "Add Accessory" elements
@@ -139,27 +112,14 @@ const AddNewAsset = () => {
 	}
 
 	const onSubmitAddNewAsset = async (event) => {
+		console.log(fieldInputData)
 		event.preventDefault()
 
 		const assetPostData = {
 			asset_type: asset_type.toLowerCase(),
-			asset: {
-				serialnumber,
-				make,
-				model,
-				asset_condition,
-			},
+			asset: fieldInputData,
 			location_id: locations.codeToIdMap[locationCode],
 			transfer_date,
-		}
-
-		// add imei to post data if modem of cellphone
-		if(imei) {
-			assetPostData.asset.imei = imei
-		}
-		// add description for misc assets
-		if(description) {
-			assetPostData.asset.description = description
 		}
 
 		// remove accessory ids for submission - not expected by server
@@ -180,14 +140,9 @@ const AddNewAsset = () => {
 				alert('Asset added');
 				setTransferDate('');
 				setAssetType('');
-				setMake('');
-				setModel('');
-				setCondition('');
-				setSerialNumber('');
-				setImei('');
-				setDescription('');
 				setAddAccessoryCount(0);
 				setAccPostData([]);
+				setFieldInputData({});
 			}
 		} catch(err) {
 			if(Number(err.data.code) === Number(23502)) {
@@ -201,8 +156,7 @@ const AddNewAsset = () => {
 
 	return (
 		<div className="pt2">
-			{console.log(customFieldData)}
-			{!isSuccess || !gotLocations
+			{!isSuccess || !gotLocations || !gotAssettypes
 				? 
 				<h1> LOADING </h1>
 				:
@@ -220,40 +174,9 @@ const AddNewAsset = () => {
 						<SuggestBox 
 							label="Asset Type:"
 							initial_input={asset_type}
-							suggestlist={ASSET_TYPES} 
+							suggestlist={assettypes} 
 							addNewEnabled={false}
-							handleInputChange={input_value => setAssetType(input_value)}
-						/>
-						<SuggestBox 
-							label="Make:"
-							initial_input={make} 
-							suggestlist={assetlists[asset_type.toLowerCase()]?.makeList}
-							addNewEnabled={true} 
-							handleInputChange={input_value => setMake(input_value)}
-						/>
-						<SuggestBox 
-							label="Model:"
-							initial_input={model} 
-							suggestlist={assetlists[asset_type.toLowerCase()]?.modelList} 
-							addNewEnabled={true} 
-							handleInputChange={input_value => setModel(input_value)}
-						/>	
-						<TextInput
-							label="Description:"
-							value={description}
-							handleInputChange={event => setDescription(event.target.value)}
-						/>
-						<SuggestBox 
-							label="Condition:"
-							initial_input={asset_condition} 
-							suggestlist={assetlists[asset_type.toLowerCase()]?.conditionList} 
-							addNewEnabled={true} 
-							handleInputChange={input_value => setCondition(input_value)}
-						/>	
-						<TextInput
-							label="Serial Number:"
-							value={serialnumber}
-							handleInputChange={event => setSerialNumber(event.target.value)}
+							handleInputChange={input_value => {setAssetType(input_value)}}
 						/>
 						<SuggestBox 
 							label="Location:"
@@ -262,14 +185,13 @@ const AddNewAsset = () => {
 							addNewEnabled={false} 
 							handleInputChange={input_value => setLocationCode(input_value)}
 						/>
-						{showCustomFields()}	
-						{(asset_type.toLowerCase() === 'cellphone' || asset_type.toLowerCase() === 'modem') &&
-							<TextInput
-								label="IMEI"
-								value={imei}
-								handleInputChange={event => setImei(event.target.value)}
-							/> 
-						}
+						{asset_type && 						
+							<AssetFields
+								assettype={asset_type}
+								fieldInputData={fieldInputData}
+								handleFieldInput={input_value => handleFieldInput(input_value)}
+							/>
+						}	
 						{/*function returns Add Accessory components */}
 						{addAccessories()}
 						<button
@@ -278,7 +200,7 @@ const AddNewAsset = () => {
 						> Add Accessory </button><br></br>
 
 						{/*Conditionally render submit button only if fields specified have been filled*/}
-						{ asset_type && transfer_date && make && model && serialnumber && asset_condition && checkAccData() && locationCode &&
+						{ asset_type && checkAccData() && locationCode &&
 							<input className="b"
 								type="submit" 
 								value="Submit" 

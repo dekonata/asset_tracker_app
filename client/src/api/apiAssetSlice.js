@@ -28,7 +28,7 @@ const assetsApi = emptySplitApi.injectEndpoints({
 				method: 'POST',
 				body: assetData
 			}),
-			invalidatesTags: ['Assets', 'Accessories']
+			invalidatesTags: ['Assets', 'Accessories', 'TypeLists']
 		}),
 		addMultipleAssets: builder.mutation({
 			query: assetsData => ({

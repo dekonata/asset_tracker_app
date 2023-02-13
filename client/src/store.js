@@ -8,6 +8,7 @@ import assetCardReducer from './components/AssetCard/assetCardSlice';
 import accessoryCardReducer from './components/AccessoryCard/accessoryCardSlice';
 import staffCardReducer from './components/StaffCard/staffCardSlice';
 import locationCardReducer from './components/LocationCard/locationCardSlice.js';
+import assetTypeCardReducer from './components/AssetTypeCard/assetTypeCardSlice';
 import suggestListReducer from './components/SuggestBox/suggestBoxSlice';
 
 
@@ -17,6 +18,7 @@ export default configureStore({
 		viewedit: viewEditReducer,
 		route: navibarReducer,
 		asset: assetCardReducer,
+		assettype: assetTypeCardReducer,
 		accessory: accessoryCardReducer,
 		staff: staffCardReducer,
 		locations: locationCardReducer,
