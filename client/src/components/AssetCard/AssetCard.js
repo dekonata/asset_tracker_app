@@ -50,6 +50,7 @@ const AssetCard = () => {
 
 	return(
 		<div className=''>
+			{console.log(asset)}
 			{!isSuccess
 				?
 				<h1>LOADINNG</h1>

@@ -107,7 +107,8 @@ async function getOneAsset(serial_number) {
 				.where({'all_assets.serialnumber': serial_number})
 		return asset[0]
 	} catch (err) {
-		throw err
+		console.log(err);
+		throw err;
 	}
 }
 // Get lists for each field to be used in frontend suggestbox
